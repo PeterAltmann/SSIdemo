@@ -192,4 +192,4 @@ So, what happened? When Faber started, he generated a DID and asked a steward (n
 }
 ```
 
-Using the ledger, Alice can now verify that the connection request indeed came from Faber.
+Using the ledger, Alice can now verify that the connection request indeed came from Faber. Alice can also browse the VDR and look for faber's endpoints.
