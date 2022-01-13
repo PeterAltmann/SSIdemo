@@ -188,6 +188,7 @@ So, what happened? When Faber started, he generated a DID and asked a steward (n
       "verkey": "HXyEFJ8YA5cfY7f3ALb2jddZ9FGfwSKywruD1QtfgD6o"
       },
     ...
+  }
 }
 ```
 
