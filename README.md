@@ -415,9 +415,11 @@ aca-py start \
 Listening...
 ```
 
-The commands are similar with the exception that Bob does not register to the VDR as a holder. Also, `--wallet-local-did` is used to generate a private pairwise DID for Bob and Alice.
+The commands are similar with the exception that Bob does not register to the VDR as a holder. Also, `--wallet-local-did` is used to generate a private pairwise DID for Bob and Alice. For more on connection protocols, see [Aries RFC 0160](https://github.com/hyperledger/aries-rfcs/tree/9b0aaa39df7e8bd434126c4b33c097aae78d65bf/features/0160-connection-protocol).
 
 ### Creating a private connection invite
+
+https://ldej.nl/post/becoming-a-hyperledger-aries-developer-getting-started/
 
 ```bash
 curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
