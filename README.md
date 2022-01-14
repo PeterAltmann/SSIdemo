@@ -52,69 +52,82 @@ Flavors Explained](https://www.lfph.io/wp-content/uploads/2021/02/Verifiable-Cre
 
 # General setup guide for the labs
 
-The prerequisites for the labs are a computer and a smart phone. All the labs can be run locally on your machine, or using the browser using a service called "Play with Docker", which allows you to access a terminal command line without having to install anything locally. If you want to run the labs locally, you will need a terminal CLI running bash shell, [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/), and [git](https://www.linode.com/docs/guides/how-to-install-git-on-linux-mac-and-windows/). To run the labs in your browser, go to the docker playground http://play-with-von.vonx.io/ (already has all the prerequisites installed).
+The prerequisites for the labs are a computer (with access to Ubuntu 18.04) and a smart phone. All the labs can be run locally on your machine, or using the browser using a service called "Play with Docker", which allows you to access a terminal command line without having to install anything locally. If you want to run the labs locally, you will need a terminal CLI running bash shell, [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/), and [git](https://www.linode.com/docs/guides/how-to-install-git-on-linux-mac-and-windows/). To run the labs in your browser, go to the docker playground http://play-with-von.vonx.io/ (already has all the prerequisites installed).
 
 ## Lab 1. Establishing a connection between two agents
 
-In this description, we assume that you are running the lab using your browser. Navigate tot he docker playground and add three new instances if you want to run the VDR (or only two agent instances if you want to use a public VDR).
+To establish a connection, we need 
 
-Instance 1 w ill be the VDR, in this case running a modified instance of the Hyperledger Indy DLT. To run the network locally, use the following commands:
+1. A working VDR
+2. One agent issuing a connection invitation
+3. Another agent acceping the connection invitation
+
+There exist several ways to create a working VDR. The options to run a VDR on a local machine, on a remote server we control, and connecting to a pre-existing test oriented VDR are shown below. Once the VDR is up and running, we can focus on the agents. The demo inluded in ACA-Py includes two agents that seek to connect with each other. For now, we will only run the demo to see what a connection flow looks like. The first of two agents are Faber, who issues the connection request and is a made up university. The second agent is Alice, a recently graduated university student who wants her diploma as a VC.
 
 ### For a local VDR
 
-Only do the below if you want to run the VDR instance locally on your home server!
+Running a VDR locally will create the VDR on the same machine as the two agents as follows.
+
 ```bash
 git clone https://github.com/bcgov/von-network
 cd von-network
 ./manage build
 ./manage start --logs
-# Once the startup is ready, you can connect to the web server on http://localhost:9000
 ```
-Open a new terminal tab. Do the following for the Faber instance.
+Check http://localhost:9000) to make sure the VDR is up and running. Open a new terminal tab and do the following for the Faber instance.
+
 ```bash
 git clone https://github.com/hyperledger/aries-cloudagent-python
 cd aries-cloudagent-python/demo
 ./run_demo faber
 ```
+
 Open a new terminal tab. Do the following for the Alice instance.
+
 ```bash
 git clone https://github.com/hyperledger/aries-cloudagent-python
 cd aries-cloudagent-python/demo
 ./run_demo alice
 ```
 
-Continue to the "Establish connection" section below.
+Follow the CLI options to establish a connection.
 
 ### For a remote VDR
 
-Only do the below on your server if you want to setup a remote VDR instance on said server!
+To install the VDR on a remote server, do as follows.
+
 ```bash
 git clone https://github.com/bcgov/von-network
 cd von-network
 ./manage build
 ./manage start <server_ip> &
 ```
+
 Once the startup is ready, you can connect to the web server on http://<server_ip>:9000
 
 Do the below on the Faber instance.
+
 ```bash
 git clone https://github.com/hyperledger/aries-cloudagent-python
 cd aries-cloudagent-python/demo
 LEDGER_URL=<server_ip>:9000 ./run_demo faber
 ```
 
-Continue to the "Establish connection" section below.
+Do the below on the Alice instance.
 
-Do the below on the Faber instance.
 ```bash
 git clone https://github.com/hyperledger/aries-cloudagent-python
 cd aries-cloudagent-python/demo
 LEDGER_URL=http://<server_ip>:9000 ./run_demo alice
 ```
+Follow the CLI options to establish a connection.
 
 ### For a public VDR
 
+There exist multiple public VDRs that run test and developer networks. One such network is the [BCovrin network](http://dev.bcovrin.vonx.io/) hosted by the government of British Colombia.
+
 Do the below on the Faber instance.
+
 ```bash
 git clone https://github.com/hyperledger/aries-cloudagent-python
 cd aries-cloudagent-python/demo
@@ -122,74 +135,355 @@ LEDGER_URL=http://dev.greenlight.bcovrin.vonx.io ./run_demo faber
 ```
 
 Do the below on the Faber instance.
+
 ```bash
 git clone https://github.com/hyperledger/aries-cloudagent-python
 cd aries-cloudagent-python/demo
 LEDGER_URL=http://dev.greenlight.bcovrin.vonx.io ./run_demo alice
 ```
 
-### Establish connection
+Follow the CLI options to establish a connection.
 
-Once Faber has started, a connection request is published. In my instance, it looked like this following `Invitation data:`:
+### The connection
+
+Once Faber has started, a connection request is published. It can look like this:
 
 ```JSON
 {
   "@type": "https://didcomm.org/out-of-band/1.0/invitation",
-  "@id": "e88affc6-5e67-4a64-a107-e5053f18fe38",
+  "@id": "a6ff56d3-539e-4c09-bcfc-5cb582bae824",
+  "handshake_protocols": [
+    "https://didcomm.org/didexchange/1.0"
+  ],
   "services": [
     {
       "id": "#inline",
       "type": "did-communication",
       "recipientKeys": [
-        "did:key:z6MktM9tkzqT8u6PZon7KqVyXC9FDYZaFocEo3xGbTCWCZK4"
+        "did:key:z6MkiMKr3xYA8o8mHb2S92Va7eWdjTTtW21QL7VomxBXnKne"
       ],
-      "serviceEndpoint": "http://ip10-6-103-5-c7g3d43nbu9ga4a60skg-8020.direct.play-with-von.vonx.io"
+      "serviceEndpoint": "http://172.17.0.1:8020"
     }
-  ],
-  "handshake_protocols": [
-    "https://didcomm.org/didexchange/1.0"
   ],
   "label": "faber.agent"
 }
 ```
 
-Alice can now accept the invitiation and generate the following response:
+Note that the connection request is public. Anyone who has the invitation Alice can now accept the invitiation and generate the following response:
 
 ```JSON
 {
-  "accept": "auto",
-  "their_role": "inviter",
-  "created_at": "2022-01-13T15:22:37.796205Z",
-  "their_label": "faber.agent",
-  "state": "request",
-  "updated_at": "2022-01-13T15:22:37.885637Z",
-  "invitation_msg_id": "e88affc6-5e67-4a64-a107-e5053f18fe38",
-  "rfc23_state": "request-sent",
-  "my_did": "NuJAe2R8JK644uBeqrXudT",
-  "routing_state": "none",
-  "request_id": "eff611a9-987f-4b2e-b2c8-b4b890258919",
   "connection_protocol": "didexchange/1.0",
+  "their_role": "inviter",
+  "invitation_key": "4u4oTiHioFeJB6BjTTXjGYxdutC368m3e6aswgDWs71G",
   "invitation_mode": "once",
-  "connection_id": "faac64c6-faf4-4720-9164-e3198e81218f",
-  "invitation_key": "EttrAkb1oMbvTJwQeGY8g6bFPyHiqvMt733LmBEVHLXg"
+  "state": "request",
+  "rfc23_state": "request-sent",
+  "accept": "auto",
+  "routing_state": "none",
+  "my_did": "VHNZAZvmrDLoJc5p8NhXz3",
+  "their_label": "faber.agent",
+  "connection_id": "75d75abc-4032-4747-8de6-9990d199b886",
+  "updated_at": "2022-01-14T08:25:01.527751Z",
+  "created_at": "2022-01-14T08:25:01.453026Z",
+  "request_id": "12d17855-6990-4fee-b27e-4cb0ab3dbbb4",
+  "invitation_msg_id": "a6ff56d3-539e-4c09-bcfc-5cb582bae824"
 }
 ```
 
-So, what happened? When Faber started, he generated a DID and asked a steward (nodes with write permission to the VDR) to register his DID on the VDR. If we use the ledger browser and go to <server_ip>/browse/domain we can look for the tx that registered faber. The raw tx data is quite extensive, but the part that matters looks like follows:
+So, what happened? When Faber started, he used the VDR's genesis file (`<server_ip>:9000/genesis`) to get a list of stewards (nodes with VDR write permission) and service endpoints. Faber then generated a DID and asked a steward to register his DID on the VDR. It is worth taking a quick look at parts (more specificaly node 1) of the genesis file to understand what it contains.
 
 ```JSON
 {
-  ...
+  "reqSignature": {},
   "txn": {
     "data": {
-      "alias": "faber.agent",
-      "dest": "XLU6qEdvMpZ8kGkDGenmPk",
-      "role": "101",
-      "verkey": "HXyEFJ8YA5cfY7f3ALb2jddZ9FGfwSKywruD1QtfgD6o"
+      "data": {
+        "alias": "Node1",
+        "blskey": "4N8aUNHSgjQVgkpm8nhNEfDf6txHznoYREg9kirmJrkivgL4oSEimFF6nsQ6M41QvhM2Z33nves5vfSn9n1UwNFJBYtWVnHYMATn76vLuL3zU88KyeAYcHfsih3He6UHcXDxcaecHVz6jhCYz1P2UZn2bDVruL5wXpehgBfBaLKm3Ba",
+        "blskey_pop": "RahHYiCvoNCtPTrVtP7nMC5eTYrsUA8WjXbdhNc8debh1agE9bGiJxWBXYNFbnJXoXhWFMvyqhqhRoq737YQemH5ik9oL7R4NTTCz2LEZhkgLJzB3QRQqJyBNyv7acbdHrAT8nQ9UkLbaVL9NBpnWXBTw4LEMePaSHEw66RzPNdAX1",
+        "client_ip": "172.17.0.1",
+        "client_port": 9702,
+        "node_ip": "172.17.0.1",
+        "node_port": 9701,
+        "services": [
+          "VALIDATOR"
+        ]
       },
-    ...
+      "dest": "Gw6pDLhcBcoQesN72qfotTgFa7cbuqZpkX3Xo6pLhPhv"
+    },
+    "metadata": {
+      "from": "Th7MpTaRZVRYnPiabds81Y"
+    },
+    "type": "0"
+  },
+  "txnMetadata": {
+    "seqNo": 1,
+    "txnId": "fea82e10e894419fe2bea7d96296a6d46f50f93f9eeda954ec461b2ed2950b62"
+  },
+  "ver": "1"
+}
+```
+
+If we use the ledger browser and go to `<server_ip>:9000/browse/domain` we can look for the tx that registered faber. The raw tx data is quite extensive, but the part that matters looks like follows:
+
+```JSON
+{
+  "...": "...",
+  "txn": {
+    "data": {
+      "dest": "DWSDA3P6MaPgsgTmDbQ2TK",
+      "raw": "{\"endpoint\":{\"endpoint\":\"http://172.17.0.1:8020\"}}"
+    },
+    "...": "..."
   }
 }
 ```
 
-Using the ledger, Alice can now verify that the connection request indeed came from Faber. Alice can also browse the VDR and look for faber's endpoints.
+Using the ledger, Alice can verify that the connection request indeed came from Faber. Alice can also browse the VDR and look for faber's endpoints. The VDR provides the source of technical trust Alice needs to know that Faber's connection request indeed came from an actor registered as Faber. As long as Alice can trust the identity proofing process Faber did with the VDR steward, she can trust that the registered actor is indeed Faber.
+
+To stop the VDR (try and see what happens while Faber and Alice are still connected):
+
+```bash
+./manage stop
+```
+
+To completely destroy the VDR instance:
+
+```bash
+./manage down
+```
+
+This concludes Lab 1.
+
+## Lab 2. An introduction to agents and wallets with ACA-Py
+
+In Lab 1, we used a runner to create two agents, Faber and Alice, and set up a connection between them. The runner consists of an agent (an instance of ACA-Py) and the controller (the code that interacts with the HTTP Admin Endpoints of ACA-Py). Moving forward, we do not want to use the demo for experimenting with our agents and our wallets. We instead start ACA-Py instances ourselves, and will use `curl` commands to act as the controller. We could of course use any programming language to act as our controller as long as we are able to interact with Web Services.
+
+
+### Installing ACA-Py
+
+To run this lab you have to install ACA-Py. It is available as a Python package through pip
+
+```bash
+pip3 install aries-cloudagent
+```
+
+ACA-Py can also be installed using the repository:
+
+```bash
+git clone https://github.com/hyperledger/aries-cloudagent-python
+cd aries-cloudagent-python
+pip3 install -r requirements.txt -r requirements.dev.txt -r requirements.indy.txt
+pip3 install --no-cache-dir -e .
+```
+
+
+To create wallets, you will need `python3-indy` which allows you to communicate with `libindy` (the package that can create and manage a wallet). Both are part of https://pypi.org/project/python3-indy/
+
+To install `libindy`
+```bash
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 68DB5E88
+sudo add-apt-repository "deb https://repo.sovrin.org/sdk/deb bionic master"
+sudo apt update
+sudo apt install libindy -y
+```
+
+Moving forward, we assume that you have access to a `aca-py` cli (if not, just substitue the `aca-py -args` command with `docker run --net=host bcgovimages/aries-cloudagent:py36-1.16-0_0.6.0 -args`). 
+
+### Starting an issuer
+
+In Indy networks, an issuer of a VC must do the following:
+1. Register their DID on the VDR
+2. Register the credential schema (in essence a list of attributes contained in the VC)
+3. Register a credential definition corresponding to the credential schema
+
+We derive the DID from a public key, which in turn is generated using a seed (32 characters or base64). The command
+
+```bash
+curl -X POST "http://localhost:9000/register" -d '{"seed": "Alice000000000000000000000000001", "role": "TRUST_ANCHOR", "alias": "Alice"}'
+```
+
+returns 
+
+```bash
+{
+  "did": "PLEVLDPJQMJvPLyX3LgB6S",
+  "seed": "Alice000000000000000000000000001",
+  "verkey": "DAwrZwgMwkTVHUQ8ZYAmuvzwprDmX8vFNXzFioxrWpCA"
+}
+```
+
+Note that if an DID already exist, Indy will ignore the new registration. You can now see the tx on the VDR browser. Now that the DID is registered, we can continue and create a credential schema for Alice. To do that, we need to initiate an ACA-Py instance for Alice.
+
+```bash
+aca-py start \
+--label Alice \
+-it http 0.0.0.0 8000 \
+-ot http \
+--admin 0.0.0.0 11000 \
+--admin-insecure-mode \
+--genesis-url http://localhost:9000/genesis \
+--seed Alice000000000000000000000000001 \
+--endpoint http://localhost:8000/ \
+--debug-connections \
+--auto-provision \
+--wallet-type indy \
+--wallet-name Alice1 \
+--wallet-key secret
+
+::::::::::::::::::::::::::::::::::::::::::::::
+:: Alice                                    ::
+::                                          ::
+::                                          ::
+:: Inbound Transports:                      ::
+::                                          ::
+::   - http://0.0.0.0:8000                  ::
+::                                          ::
+:: Outbound Transports:                     ::
+::                                          ::
+::   - http                                 ::
+::   - https                                ::
+::                                          ::
+:: Public DID Information:                  ::
+::                                          ::
+::   - DID: PLEVLDPJQMJvPLyX3LgB6S          ::
+::                                          ::
+:: Administration API:                      ::
+::                                          ::
+::   - http://0.0.0.0:11000                 ::
+::                                          ::
+::                               ver: 0.7.3 ::
+::::::::::::::::::::::::::::::::::::::::::::::
+
+Listening...
+```
+
+The above commands explained:
+
+* `--label` sets the name for the instance. This is the name that the WalletApp will see when you try to make a connection or when you receive a credential.
+* `-it` and `ot` sets the inbound and outbound transport methods that ACA-Py will use when communicating with other ACA-Py instances.
+* `--admin` and `--admin-insecure-mode` configure how the controller application can communicate, without authenticating, with ACA-Py using Admin Endpoints. If you open http://localhost.11000 you will see the Swagger docs and the provided label.
+* `--genesis-url` is the URL to the genesis file that the instance needs to submit the tx details to the VDR.
+* `--seed` sets the seed for the DID.
+* `--endpoint` is the URL that ACA-Py sends to the VDR so that another agent can learn how to connect with the ACA-Py instance for a particular DID. Agents will find the endpoint for PLEVLDPJQMJvPLyX3LgB6S here http://localhost:9000/browse/domain?page=1&query=PLEVLDPJQMJvPLyX3LgB6S
+* `--debug-connections` prints more information about the connections made between agents
+* `--auto-provision` makes sure that ACA-Py creates a wallet even if such a wallet does not exist. Normally, the command `aca-py provision` is used to create a wallet.
+* `--wallet-type`, `--wallet-name`, and `--wallet-key` are used to create the wallet. They key is used for read and write to the sqlite db. The wallet is found in `~./.indy_client/wallet`
+
+### Starting a holder 
+
+Now we can start Bob.
+
+```bash
+aca-py start \
+--label Bob \
+-it http 0.0.0.0 8001 \
+-ot http \
+--admin 0.0.0.0 11001 \
+--admin-insecure-mode \
+--genesis-url http://localhost:9000/genesis \
+--endpoint http://localhost:8001/ \
+--debug-connections \
+--auto-provision \
+--wallet-local-did \
+--wallet-type indy \
+--wallet-name Bob1 \
+--wallet-key secret
+
+
+::::::::::::::::::::::::::::::::::::::::::::::
+:: Bob                                      ::
+::                                          ::
+::                                          ::
+:: Inbound Transports:                      ::
+::                                          ::
+::   - http://0.0.0.0:8001                  ::
+::                                          ::
+:: Outbound Transports:                     ::
+::                                          ::
+::   - http                                 ::
+::   - https                                ::
+::                                          ::
+:: Administration API:                      ::
+::                                          ::
+::   - http://0.0.0.0:11001                 ::
+::                                          ::
+::                               ver: 0.7.3 ::
+::::::::::::::::::::::::::::::::::::::::::::::
+
+Listening...
+```
+
+The commands are similar with the exception that Bob does not register to the VDR as a holder. Also, `--wallet-local-did` is used to generate a private pairwise DID for Bob and Alice.
+
+### Creating a private connection invite
+
+```bash
+curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
+-H "Content-Type: application/json" \
+-d '{"handshake_protocols": ["did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"], "use_public_did": false, "my_label": "Alice"}'
+```
+
+This returns the following private invitation:
+
+```JSON
+{
+  "trace": false,
+  "state": "initial",
+  "invi_msg_id": "f9c84d65-eeae-42c9-b223-e8179c4abcd8",
+  "invitation": {
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
+    "@id": "f9c84d65-eeae-42c9-b223-e8179c4abcd8",
+    "handshake_protocols": [
+      "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
+    ],
+    "services": [
+      {
+        "id": "#inline",
+        "type": "did-communication",
+        "recipientKeys": [
+          "did:key:z6MktBCaLuekcqgzaQFQc2Mmbe7StGvrzeHZj8hGRpN63xzq"
+        ],
+        "serviceEndpoint": "http://localhost:8000/"
+      }
+    ],
+    "label": "Alice"
+  },
+  "invitation_url": "http://localhost:8000/?oob=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9vdXQtb2YtYmFuZC8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiZjljODRkNjUtZWVhZS00MmM5LWIyMjMtZTgxNzljNGFiY2Q4IiwgImhhbmRzaGFrZV9wcm90b2NvbHMiOiBbImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2RpZGV4Y2hhbmdlLzEuMCJdLCAic2VydmljZXMiOiBbeyJpZCI6ICIjaW5saW5lIiwgInR5cGUiOiAiZGlkLWNvbW11bmljYXRpb24iLCAicmVjaXBpZW50S2V5cyI6IFsiZGlkOmtleTp6Nk1rdEJDYUx1ZWtjcWd6YVFGUWMyTW1iZTdTdEd2cnplSFpqOGhHUnBONjN4enEiXSwgInNlcnZpY2VFbmRwb2ludCI6ICJodHRwOi8vbG9jYWxob3N0OjgwMDAvIn1dLCAibGFiZWwiOiAiQWxpY2UifQ=="
+}
+```
+
+A non-public invite does not use a public DID, instead it contains a service endpoint url, so the invited agent can connect to inviter directly.
+
+### A public connection invite
+
+A public invites contains a DID for other agents to connect with. For a public invite, the ledger needs to know at which endpoint an agent can be reached. This means that it requires a lookup in the ledger by the invited agent. To enable public invites, start the agent with the `--public-invites` flag.
+
+```bash
+curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
+-H "Content-Type: application/json" \
+-d '{"handshake_protocols": ["did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"], "use_public_did": true, "my_label": "Alice"}'
+```
+
+This returns:
+
+```JSON
+{
+  "trace": false,
+  "state": "initial",
+  "invi_msg_id": "6bea2534-49c6-4d08-aead-07fbec0142fb",
+  "invitation": {
+    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
+    "@id": "6bea2534-49c6-4d08-aead-07fbec0142fb",
+    "handshake_protocols": [
+      "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
+    ],
+    "services": [
+      "did:sov:PLEVLDPJQMJvPLyX3LgB6S"
+    ],
+    "label": "Alice"
+  },
+  "invitation_url": "http://localhost:8000/?oob=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9vdXQtb2YtYmFuZC8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiNmJlYTI1MzQtNDljNi00ZDA4LWFlYWQtMDdmYmVjMDE0MmZiIiwgImhhbmRzaGFrZV9wcm90b2NvbHMiOiBbImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2RpZGV4Y2hhbmdlLzEuMCJdLCAic2VydmljZXMiOiBbImRpZDpzb3Y6UExFVkxEUEpRTUp2UEx5WDNMZ0I2UyJdLCAibGFiZWwiOiAiQWxpY2UifQ=="
+}
+```
