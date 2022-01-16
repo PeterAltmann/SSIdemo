@@ -330,7 +330,9 @@ aca-py start \
 --auto-provision \
 --wallet-type indy \
 --wallet-name Alice1 \
---wallet-key secret
+--wallet-key secret \
+--auto-accept-invites \
+--auto-accept-requests
 
 ::::::::::::::::::::::::::::::::::::::::::::::
 :: Alice                                    ::
@@ -370,6 +372,7 @@ The above commands explained:
 * `--debug-connections` prints more information about the connections made between agents
 * `--auto-provision` makes sure that ACA-Py creates a wallet even if such a wallet does not exist. Normally, the command `aca-py provision` is used to create a wallet.
 * `--wallet-type`, `--wallet-name`, and `--wallet-key` are used to create the wallet. They key is used for read and write to the sqlite db. The wallet is found in `~./.indy_client/wallet`
+* `--auto-accept-invites` and `--auto-accept-requests` set ACA-Py instances to automatically accepts invites and requests as they come in.
 
 ### Starting a holder 
 
@@ -389,7 +392,9 @@ aca-py start \
 --wallet-local-did \
 --wallet-type indy \
 --wallet-name Bob1 \
---wallet-key secret
+--wallet-key secret \
+--auto-accept-invites \
+--auto-accept-requests
 
 
 ::::::::::::::::::::::::::::::::::::::::::::::
@@ -417,14 +422,75 @@ Listening...
 
 The commands are similar with the exception that Bob does not register to the VDR as a holder. Also, `--wallet-local-did` is used to generate a private pairwise DID for Bob and Alice. For more on connection protocols, see [Aries RFC 0160](https://github.com/hyperledger/aries-rfcs/tree/9b0aaa39df7e8bd434126c4b33c097aae78d65bf/features/0160-connection-protocol).
 
-### Creating a private connection invite
+### Creating a schema and credential definition
 
-https://ldej.nl/post/becoming-a-hyperledger-aries-developer-getting-started/
+```bash
+curl -X POST http://localhost:11000/schemas \
+-H 'Content-Type: application/json' \
+-d '{
+  "attributes": [
+    "name",
+    "age"
+  ],
+  "schema_name": "basic-schema",
+  "schema_version": "1.0"
+}'
+```
+
+This returns:
+
+```JSON
+{
+  "schema_id": "PLEVLDPJQMJvPLyX3LgB6S:2:basic-schema:1.0",
+  "schema": {
+    "ver": "1.0",
+    "id": "PLEVLDPJQMJvPLyX3LgB6S:2:basic-schema:1.0",
+    "name": "basic-schema",
+    "version": "1.0",
+    "attrNames": [
+      "name",
+      "age"
+    ],
+    "seqNo": 8
+  }
+}
+```
+
+You can find the schema browsing the VDR: http://localhost:9000/browse/domain?page=1&query=&txn_type=101. 
+
+Alice now creates a credential definition with the schema.
+
+```bash
+curl -X POST http://localhost:11000/credential-definitions \
+-H 'Content-Type: application/json' \
+-d '{
+  "schema_id": "PLEVLDPJQMJvPLyX3LgB6S:2:basic-schema:1.0",
+  "tag": "default"
+}'
+```
+
+This returns the credential definition:
+
+```JSON
+{
+  "credential_definition_id": "PLEVLDPJQMJvPLyX3LgB6S:3:CL:8:default"
+}
+```
+
+You can find the credential schema browsing the VDR: http://localhost:9000/browse/domain?page=1&query=&txn_type=102
+
+To issue a credential, Alice and Bob need to connect.
+
+### Private connections
+
+With a private connection, Alice sends over an object to Bob that contains all the information Bob needs without having to browse a VDR.
+
+#### Creating a private connection invite
 
 ```bash
 curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
--H "Content-Type: application/json" \
--d '{"handshake_protocols": ["did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"], "use_public_did": false, "my_label": "Alice"}'
+> -H "Content-Type: application/json" \
+> -d '{"handshake_protocols": ["did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"], "use_public_did": false, "my_label": "Alice"}'
 ```
 
 This returns the following private invitation:
@@ -433,59 +499,165 @@ This returns the following private invitation:
 {
   "trace": false,
   "state": "initial",
-  "invi_msg_id": "f9c84d65-eeae-42c9-b223-e8179c4abcd8",
+  "invi_msg_id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
   "invitation": {
     "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
-    "@id": "f9c84d65-eeae-42c9-b223-e8179c4abcd8",
+    "@id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
     "handshake_protocols": [
       "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
     ],
+    "label": "Alice",
     "services": [
       {
         "id": "#inline",
         "type": "did-communication",
         "recipientKeys": [
-          "did:key:z6MktBCaLuekcqgzaQFQc2Mmbe7StGvrzeHZj8hGRpN63xzq"
+          "did:key:z6MkoZ5xrgo8vcTMT6nbRXq1jLHbEkDQx71LZXQZ7FVYKG8K"
         ],
         "serviceEndpoint": "http://localhost:8000/"
       }
-    ],
-    "label": "Alice"
+    ]
   },
-  "invitation_url": "http://localhost:8000/?oob=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9vdXQtb2YtYmFuZC8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiZjljODRkNjUtZWVhZS00MmM5LWIyMjMtZTgxNzljNGFiY2Q4IiwgImhhbmRzaGFrZV9wcm90b2NvbHMiOiBbImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2RpZGV4Y2hhbmdlLzEuMCJdLCAic2VydmljZXMiOiBbeyJpZCI6ICIjaW5saW5lIiwgInR5cGUiOiAiZGlkLWNvbW11bmljYXRpb24iLCAicmVjaXBpZW50S2V5cyI6IFsiZGlkOmtleTp6Nk1rdEJDYUx1ZWtjcWd6YVFGUWMyTW1iZTdTdEd2cnplSFpqOGhHUnBONjN4enEiXSwgInNlcnZpY2VFbmRwb2ludCI6ICJodHRwOi8vbG9jYWxob3N0OjgwMDAvIn1dLCAibGFiZWwiOiAiQWxpY2UifQ=="
+  "invitation_url": "http://localhost:8000/?oob=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9vdXQtb2YtYmFuZC8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiOTA1NzY4MTYtMWY3NS00YjJhLTkwM2MtZTdiZDgzZWVlMTJjIiwgImhhbmRzaGFrZV9wcm90b2NvbHMiOiBbImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2RpZGV4Y2hhbmdlLzEuMCJdLCAibGFiZWwiOiAiQWxpY2UiLCAic2VydmljZXMiOiBbeyJpZCI6ICIjaW5saW5lIiwgInR5cGUiOiAiZGlkLWNvbW11bmljYXRpb24iLCAicmVjaXBpZW50S2V5cyI6IFsiZGlkOmtleTp6Nk1rb1o1eHJnbzh2Y1RNVDZuYlJYcTFqTEhiRWtEUXg3MUxaWFFaN0ZWWUtHOEsiXSwgInNlcnZpY2VFbmRwb2ludCI6ICJodHRwOi8vbG9jYWxob3N0OjgwMDAvIn1dfQ=="
 }
 ```
 
-A non-public invite does not use a public DID, instead it contains a service endpoint url, so the invited agent can connect to inviter directly.
-
-### A public connection invite
-
-A public invites contains a DID for other agents to connect with. For a public invite, the ledger needs to know at which endpoint an agent can be reached. This means that it requires a lookup in the ledger by the invited agent. To enable public invites, start the agent with the `--public-invites` flag.
-
-```bash
-curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
--H "Content-Type: application/json" \
--d '{"handshake_protocols": ["did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"], "use_public_did": true, "my_label": "Alice"}'
-```
-
-This returns:
+Note how a non-public invite does not use a public DID, instead it contains a service endpoint url, so the invited agent can connect to inviter directly. Alice can now browse her open connection invitations using `curl -X GET "http://localhost:11000/connections" -H  "accept: application/json"`
 
 ```JSON
 {
-  "trace": false,
-  "state": "initial",
-  "invi_msg_id": "6bea2534-49c6-4d08-aead-07fbec0142fb",
-  "invitation": {
-    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
-    "@id": "6bea2534-49c6-4d08-aead-07fbec0142fb",
-    "handshake_protocols": [
-      "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
-    ],
-    "services": [
-      "did:sov:PLEVLDPJQMJvPLyX3LgB6S"
-    ],
-    "label": "Alice"
-  },
-  "invitation_url": "http://localhost:8000/?oob=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9vdXQtb2YtYmFuZC8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiNmJlYTI1MzQtNDljNi00ZDA4LWFlYWQtMDdmYmVjMDE0MmZiIiwgImhhbmRzaGFrZV9wcm90b2NvbHMiOiBbImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2RpZGV4Y2hhbmdlLzEuMCJdLCAic2VydmljZXMiOiBbImRpZDpzb3Y6UExFVkxEUEpRTUp2UEx5WDNMZ0I2UyJdLCAibGFiZWwiOiAiQWxpY2UifQ=="
+  "results": [
+    {
+      "state": "invitation",
+      "invitation_key": "2R5GeCVoLSyae2rhDaUiqDyPQkCzkSKMv6GjLWZsqySv",
+      "invitation_mode": "once",
+      "their_role": "invitee",
+      "rfc23_state": "invitation-sent",
+      "invitation_msg_id": "9ba7bff6-6f32-40c7-9e24-91aef1590725",
+      "created_at": "2022-01-16T12:36:40.316778Z",
+      "routing_state": "none",
+      "accept": "auto",
+      "connection_protocol": "didexchange/1.0",
+      "updated_at": "2022-01-16T12:36:40.316778Z",
+      "connection_id": "56580bfa-d983-417f-a178-516e20f8123b"
+    }
+  ]
 }
 ```
+
+Bob needs to receive the invitation object that Alice generated above. Bob can receive this either using the url in ALice's connection invite, or as follows:
+
+```bash
+curl -X POST "http://localhost:11001/out-of-band/receive-invitation" \
+   -H 'Content-Type: application/json' \
+   -d '{
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
+  "@id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
+  "handshake_protocols": [
+    "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
+  ],
+  "label": "Alice",
+  "services": [
+    {
+      "id": "#inline",
+      "type": "did-communication",
+      "recipientKeys": [
+        "did:key:z6MkoZ5xrgo8vcTMT6nbRXq1jLHbEkDQx71LZXQZ7FVYKG8K"
+      ],
+      "serviceEndpoint": "http://localhost:8000/"
+    }
+  ]
+}'
+```
+
+This returned
+
+```JSON
+{
+  "routing_state": "none",
+  "request_id": "e9bfc1b5-48e2-4812-b391-9536cc4a373f",
+  "their_role": "inviter",
+  "invitation_key": "A6pvGSYhb4xtLbwtjxsAtEjbRAwZYDkysWVdGyXXQ3Lw",
+  "state": "request",
+  "updated_at": "2022-01-16T13:03:33.653631Z",
+  "created_at": "2022-01-16T13:03:33.573949Z",
+  "their_label": "Alice",
+  "rfc23_state": "request-sent",
+  "accept": "auto",
+  "invitation_mode": "once",
+  "connection_protocol": "didexchange/1.0",
+  "invitation_msg_id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
+  "my_did": "QnCNcnnrBTBkUcvkP1k294",
+  "connection_id": "8806a084-1e02-40a7-97af-307b19246393"
+}
+```
+
+The two agents are now connected. 
+
+Alice's view using `curl -X GET "http://localhost:11000/connections" -H  "accept: application/json"`
+
+```JSON
+{
+  "results": [
+    {
+      "invitation_key": "A6pvGSYhb4xtLbwtjxsAtEjbRAwZYDkysWVdGyXXQ3Lw",
+      "updated_at": "2022-01-16T13:03:33.775851Z",
+      "state": "active",
+      "my_did": "JL5wkevLJ3PPq3ZHM7BaUh",
+      "request_id": "e9bfc1b5-48e2-4812-b391-9536cc4a373f",
+      "connection_id": "0d9217eb-2ed3-4d43-b906-759392c9acc0",
+      "accept": "auto",
+      "invitation_msg_id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
+      "created_at": "2022-01-16T13:02:15.815216Z",
+      "their_role": "invitee",
+      "routing_state": "none",
+      "rfc23_state": "completed",
+      "connection_protocol": "didexchange/1.0",
+      "their_did": "QnCNcnnrBTBkUcvkP1k294",
+      "their_label": "Bob",
+      "invitation_mode": "once"
+    }
+  ]
+}
+```
+
+Bob's view using `curl -X GET "http://localhost:11001/connections" -H  "accept: application/json"`:
+
+```JSON
+{
+  "results": [
+    {
+      "routing_state": "none",
+      "request_id": "e9bfc1b5-48e2-4812-b391-9536cc4a373f",
+      "their_did": "JL5wkevLJ3PPq3ZHM7BaUh",
+      "their_role": "inviter",
+      "invitation_key": "A6pvGSYhb4xtLbwtjxsAtEjbRAwZYDkysWVdGyXXQ3Lw",
+      "state": "active",
+      "updated_at": "2022-01-16T13:03:33.755538Z",
+      "created_at": "2022-01-16T13:03:33.573949Z",
+      "their_label": "Alice",
+      "rfc23_state": "completed",
+      "accept": "auto",
+      "invitation_mode": "once",
+      "connection_protocol": "didexchange/1.0",
+      "invitation_msg_id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
+      "my_did": "QnCNcnnrBTBkUcvkP1k294",
+      "connection_id": "8806a084-1e02-40a7-97af-307b19246393"
+    }
+  ]
+}
+```
+
+### Issuing a Credential
+
+Alice and Bob share a connection. The flow depends on which party initiates the process and with what. 
+
+1. Holder sends a proposal to the issuer (issuer receives proposal)
+2. Issuer sends an offer to the holder based on the proposal (holder receives offer)
+3. Holder sends a request to the issuer (issuer receives request)
+4. Issuer sends credential to holder (holder receives credentials)
+5. Holder stores credential (holder sends acknowledge to issuer)
+6. Issuer receives acknowledge
+
+Step 1 is optional and the flow can start at step 2. Optionally, the entire offer part can be skipped and then the flow starts at step 3.
+
