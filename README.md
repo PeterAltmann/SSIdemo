@@ -607,9 +607,11 @@ Bob's view using `curl -X GET "http://localhost:11001/connections" -H  "accept: 
 
 ```
 
+We can now continue the lab.
+
 ### Issuing a Credential
 
-Alice and Bob share a connection. The flow depends on which party initiates the process and with what. 
+Alice and Bob now share a connection. The credential issuance flow depends on which party initiates the process and with what. 
 
 1. Holder sends a proposal to the issuer (issuer receives proposal)
 2. Issuer sends an offer to the holder based on the proposal (holder receives offer)
@@ -622,7 +624,7 @@ Step 1 is optional and the flow can start at step 2. Optionally, the entire offe
 
 The steps can be very confusing the first time around (especially when multiple VC are invovled). To keep track of the particular VC flow, each agent assigns a `cred_ex_id` value to the object. Note that both agents can find the existing state machines they are handling using some shared value, e.g., their `connection_id`.
 
-#### Step 1
+#### Step 1: Holder sends proposal
 
 Desired state transitions:
 
@@ -664,7 +666,7 @@ curl -X GET "http://localhost:11001/issue-credential-2.0/records?connection_id=6
 >   "cred_ex_id": "c56a5b63-add1-4b58-a307-fde6ff0e8e80"
 ```
 
-#### Step 2
+#### Step 2: Issuer sends an offer
 
 Desired state transitions:
 
@@ -685,7 +687,7 @@ curl -X POST http://localhost:11000/issue-credential-2.0/records/18953612-0d25-4
  -H "Content-Type: application/json"
  ```
 
-#### Step 3
+#### Step 3: Holder sends a request
 
 Desired state transitions:
 
@@ -696,7 +698,7 @@ Desired state transitions:
 curl -X POST http://localhost:11001/issue-credential-2.0/records/c56a5b63-add1-4b58-a307-fde6ff0e8e80/send-request
 ```
 
-#### Step 4
+#### Step 4: Issuer sends credential
 
 Desired state transitions:
 
@@ -708,7 +710,7 @@ curl -X POST http://localhost:11000/issue-credential-2.0/records/18953612-0d25-4
 -H "Content-Type: application/json" -d '{"comment": "Please have this"}'
 ```
 
-#### Step 5
+#### Step 5 & 6: Holder stores credential and confirms receipt
 
 Desired state transitions:
 
@@ -720,7 +722,9 @@ curl -X POST http://localhost:11001/issue-credential-2.0/records/c56a5b63-add1-4
 -H "Content-Type: application/json" -d '{}'
 ```
 
-Bob now stores the credential and notifies Alice. To see Bob's VC:
+Bob now stores the credential and notifies Alice. 
+
+To see Bob's VC:
 
 ```bash
 curl -X GET "http://localhost:11001/credentials" -H  "accept: application/json"
@@ -745,3 +749,24 @@ which returns:
   ]
 }
 ```
+
+### Automating and debugging connections and credential flows with ACA-Py
+
+To debug, you can set the flag `--debug-credentials` in ACA-Py and it will log information to the console. 
+
+The endpoint `/issue-credential-2.0/send` sets the flags `auto_offer` and `auto_issue` to `true`. The holder will automatically accept offers and turn them into requests, making it easier to automate the process from the issuers's dev standpoint. 
+
+The entire credential flow can be automated further with:
+
+* `--auto-respond-credential-proposal`
+* `--auto-respond-credential-offer`
+* `--auto-respond-credential-request`
+* `--auto-store-credential`
+
+The credential exchange record will be automatically removed after issuing the corresponding credential. Thi can be disabled usign the flag `--preserve-exchange-records` in ACA-py.
+
+This concludes Lab 2.
+
+## Lab 3.
+
+TBC
