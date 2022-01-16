@@ -497,53 +497,26 @@ This returns the following private invitation:
 
 ```JSON
 {
-  "trace": false,
-  "state": "initial",
-  "invi_msg_id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
-  "invitation": {
-    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
-    "@id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
-    "handshake_protocols": [
-      "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
-    ],
-    "label": "Alice",
-    "services": [
-      {
-        "id": "#inline",
-        "type": "did-communication",
-        "recipientKeys": [
-          "did:key:z6MkoZ5xrgo8vcTMT6nbRXq1jLHbEkDQx71LZXQZ7FVYKG8K"
-        ],
-        "serviceEndpoint": "http://localhost:8000/"
-      }
-    ]
-  },
-  "invitation_url": "http://localhost:8000/?oob=eyJAdHlwZSI6ICJkaWQ6c292OkJ6Q2JzTlloTXJqSGlxWkRUVUFTSGc7c3BlYy9vdXQtb2YtYmFuZC8xLjAvaW52aXRhdGlvbiIsICJAaWQiOiAiOTA1NzY4MTYtMWY3NS00YjJhLTkwM2MtZTdiZDgzZWVlMTJjIiwgImhhbmRzaGFrZV9wcm90b2NvbHMiOiBbImRpZDpzb3Y6QnpDYnNOWWhNcmpIaXFaRFRVQVNIZztzcGVjL2RpZGV4Y2hhbmdlLzEuMCJdLCAibGFiZWwiOiAiQWxpY2UiLCAic2VydmljZXMiOiBbeyJpZCI6ICIjaW5saW5lIiwgInR5cGUiOiAiZGlkLWNvbW11bmljYXRpb24iLCAicmVjaXBpZW50S2V5cyI6IFsiZGlkOmtleTp6Nk1rb1o1eHJnbzh2Y1RNVDZuYlJYcTFqTEhiRWtEUXg3MUxaWFFaN0ZWWUtHOEsiXSwgInNlcnZpY2VFbmRwb2ludCI6ICJodHRwOi8vbG9jYWxob3N0OjgwMDAvIn1dfQ=="
-}
-```
-
-Note how a non-public invite does not use a public DID, instead it contains a service endpoint url, so the invited agent can connect to inviter directly. Alice can now browse her open connection invitations using `curl -X GET "http://localhost:11000/connections" -H  "accept: application/json"`
-
-```JSON
-{
-  "results": [
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
+  "@id": "49450337-07cc-41bc-a2fb-76d832353272",
+  "services": [
     {
-      "state": "invitation",
-      "invitation_key": "2R5GeCVoLSyae2rhDaUiqDyPQkCzkSKMv6GjLWZsqySv",
-      "invitation_mode": "once",
-      "their_role": "invitee",
-      "rfc23_state": "invitation-sent",
-      "invitation_msg_id": "9ba7bff6-6f32-40c7-9e24-91aef1590725",
-      "created_at": "2022-01-16T12:36:40.316778Z",
-      "routing_state": "none",
-      "accept": "auto",
-      "connection_protocol": "didexchange/1.0",
-      "updated_at": "2022-01-16T12:36:40.316778Z",
-      "connection_id": "56580bfa-d983-417f-a178-516e20f8123b"
+      "id": "#inline",
+      "type": "did-communication",
+      "recipientKeys": [
+        "did:key:z6MkoeyEuKV7QhYE7YL2hpkxZ4qmxYT719r9qSJrCBhfwKuc"
+      ],
+      "serviceEndpoint": "http://localhost:8000/"
     }
-  ]
+  ],
+  "handshake_protocols": [
+    "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
+  ],
+  "label": "Alice"
 }
 ```
+
+Note how a non-public invite does not use a public DID, instead it contains a service endpoint url, so the invited agent can connect to inviter directly. 
 
 Bob needs to receive the invitation object that Alice generated above. Bob can receive this either using the url in ALice's connection invite, or as follows:
 
@@ -552,44 +525,22 @@ curl -X POST "http://localhost:11001/out-of-band/receive-invitation" \
    -H 'Content-Type: application/json' \
    -d '{
   "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
-  "@id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
-  "handshake_protocols": [
-    "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
-  ],
-  "label": "Alice",
+  "@id": "49450337-07cc-41bc-a2fb-76d832353272",
   "services": [
     {
       "id": "#inline",
       "type": "did-communication",
       "recipientKeys": [
-        "did:key:z6MkoZ5xrgo8vcTMT6nbRXq1jLHbEkDQx71LZXQZ7FVYKG8K"
+        "did:key:z6MkoeyEuKV7QhYE7YL2hpkxZ4qmxYT719r9qSJrCBhfwKuc"
       ],
       "serviceEndpoint": "http://localhost:8000/"
     }
-  ]
+  ],
+  "handshake_protocols": [
+    "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
+  ],
+  "label": "Alice"
 }'
-```
-
-This returned
-
-```JSON
-{
-  "routing_state": "none",
-  "request_id": "e9bfc1b5-48e2-4812-b391-9536cc4a373f",
-  "their_role": "inviter",
-  "invitation_key": "A6pvGSYhb4xtLbwtjxsAtEjbRAwZYDkysWVdGyXXQ3Lw",
-  "state": "request",
-  "updated_at": "2022-01-16T13:03:33.653631Z",
-  "created_at": "2022-01-16T13:03:33.573949Z",
-  "their_label": "Alice",
-  "rfc23_state": "request-sent",
-  "accept": "auto",
-  "invitation_mode": "once",
-  "connection_protocol": "didexchange/1.0",
-  "invitation_msg_id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
-  "my_did": "QnCNcnnrBTBkUcvkP1k294",
-  "connection_id": "8806a084-1e02-40a7-97af-307b19246393"
-}
 ```
 
 The two agents are now connected. 
@@ -600,52 +551,54 @@ Alice's view using `curl -X GET "http://localhost:11000/connections" -H  "accept
 {
   "results": [
     {
-      "invitation_key": "A6pvGSYhb4xtLbwtjxsAtEjbRAwZYDkysWVdGyXXQ3Lw",
-      "updated_at": "2022-01-16T13:03:33.775851Z",
-      "state": "active",
-      "my_did": "JL5wkevLJ3PPq3ZHM7BaUh",
-      "request_id": "e9bfc1b5-48e2-4812-b391-9536cc4a373f",
-      "connection_id": "0d9217eb-2ed3-4d43-b906-759392c9acc0",
       "accept": "auto",
-      "invitation_msg_id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
-      "created_at": "2022-01-16T13:02:15.815216Z",
-      "their_role": "invitee",
-      "routing_state": "none",
-      "rfc23_state": "completed",
+      "connection_id": "50a1c481-b87b-4ea5-a48b-9fd9382322f9",
       "connection_protocol": "didexchange/1.0",
-      "their_did": "QnCNcnnrBTBkUcvkP1k294",
+      "created_at": "2022-01-16T14:27:11.200483Z",
+      "invitation_key": "ACiCK5Eg5A3m13VL2Fo7hyHn8yBFbGbo9RPvMujf278E",
+      "invitation_mode": "once",
+      "invitation_msg_id": "49450337-07cc-41bc-a2fb-76d832353272",
+      "my_did": "EUHD9iSf1p1JwG951Z5XGQ",
+      "request_id": "565c2eca-8323-473d-94bf-1425b971e4da",
+      "rfc23_state": "completed",
+      "routing_state": "none",
+      "state": "active",
+      "their_did": "UFw5hG1zZXRdPL1pn9CrVJ",
       "their_label": "Bob",
-      "invitation_mode": "once"
+      "their_role": "invitee",
+      "updated_at": "2022-01-16T14:28:54.322723Z"
     }
   ]
 }
+
 ```
 
-Bob's view using `curl -X GET "http://localhost:11001/connections" -H  "accept: application/json"`:
+Bob's view using `curl -X GET "http://localhost:11001/connections" -H  "accept: application/json"` (sorted alphabetically for readability):
 
 ```JSON
 {
   "results": [
     {
-      "routing_state": "none",
-      "request_id": "e9bfc1b5-48e2-4812-b391-9536cc4a373f",
-      "their_did": "JL5wkevLJ3PPq3ZHM7BaUh",
-      "their_role": "inviter",
-      "invitation_key": "A6pvGSYhb4xtLbwtjxsAtEjbRAwZYDkysWVdGyXXQ3Lw",
-      "state": "active",
-      "updated_at": "2022-01-16T13:03:33.755538Z",
-      "created_at": "2022-01-16T13:03:33.573949Z",
-      "their_label": "Alice",
-      "rfc23_state": "completed",
       "accept": "auto",
-      "invitation_mode": "once",
+      "connection_id": "644cd762-bf83-4ed4-89f2-221fc220c3cf",
       "connection_protocol": "didexchange/1.0",
-      "invitation_msg_id": "90576816-1f75-4b2a-903c-e7bd83eee12c",
-      "my_did": "QnCNcnnrBTBkUcvkP1k294",
-      "connection_id": "8806a084-1e02-40a7-97af-307b19246393"
+      "created_at": "2022-01-16T14:28:54.135817Z",
+      "invitation_key": "ACiCK5Eg5A3m13VL2Fo7hyHn8yBFbGbo9RPvMujf278E",
+      "invitation_mode": "once",
+      "invitation_msg_id": "49450337-07cc-41bc-a2fb-76d832353272",
+      "my_did": "UFw5hG1zZXRdPL1pn9CrVJ",
+      "request_id": "565c2eca-8323-473d-94bf-1425b971e4da",
+      "rfc23_state": "completed",
+      "routing_state": "none",
+      "state": "active",
+      "their_did": "EUHD9iSf1p1JwG951Z5XGQ",
+      "their_label": "Alice",
+      "their_role": "inviter",
+      "updated_at": "2022-01-16T14:28:54.305559Z"
     }
   ]
 }
+
 ```
 
 ### Issuing a Credential
@@ -659,5 +612,33 @@ Alice and Bob share a connection. The flow depends on which party initiates the 
 5. Holder stores credential (holder sends acknowledge to issuer)
 6. Issuer receives acknowledge
 
-Step 1 is optional and the flow can start at step 2. Optionally, the entire offer part can be skipped and then the flow starts at step 3.
+Step 1 is optional and the flow can start at step 2. Optionally, the entire offer part can be skipped and then the flow starts at step 3. Below, we run the entire process to demonstrate the entire possible flow.
 
+#### Step 1
+
+```bash
+curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal \
+ -H "Content-Type: application/json" -d '{
+  "comment": "I want this",
+  "connection_id": "",
+  "credential_preview": {
+    "@type": "issue-credential/2.0/credential-preview",
+    "attributes": [
+      {
+        "mime-type": "plain/text",
+        "name": "name", 
+        "value": "Bob"
+      },
+      {
+        "mime-type": "plain/text",
+        "name": "age", 
+        "value": "30"
+      }
+    ]
+  },
+  "filter": {
+    "dif": {},
+    "indy": {}
+  }
+}'
+```
