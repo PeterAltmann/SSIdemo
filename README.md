@@ -278,7 +278,6 @@ pip3 install -r requirements.txt -r requirements.dev.txt -r requirements.indy.tx
 pip3 install --no-cache-dir -e .
 ```
 
-
 To create wallets, you will need `python3-indy` which allows you to communicate with `libindy` (the package that can create and manage a wallet). Both are part of https://pypi.org/project/python3-indy/
 
 To install `libindy`
@@ -291,7 +290,7 @@ sudo apt install libindy -y
 
 Moving forward, we assume that you have access to a `aca-py` cli (if not, just substitue the `aca-py -args` command with `docker run --net=host bcgovimages/aries-cloudagent:py36-1.16-0_0.6.0 -args`). 
 
-### Starting an issuer
+### Starting the credential issuer Alice
 
 In Indy networks, an issuer of a VC must do the following:
 1. Register their DID on the VDR
@@ -314,7 +313,9 @@ returns
 }
 ```
 
-Note that if an DID already exist, Indy will ignore the new registration. You can now see the tx on the VDR browser. Now that the DID is registered, we can continue and create a credential schema for Alice. To do that, we need to initiate an ACA-Py instance for Alice.
+Note that if an DID already exist, Indy will ignore the new registration. You can now see the tx on the VDR browser. 
+
+Now that the DID is registered, we can continue the next step toward creating a schema and a credential schema for Alice. To do that, we need to initiate an ACA-Py instance for Alice.
 
 ```bash
 aca-py start \
@@ -333,6 +334,8 @@ aca-py start \
 --wallet-key secret \
 --auto-accept-invites \
 --auto-accept-requests
+
+>
 
 ::::::::::::::::::::::::::::::::::::::::::::::
 :: Alice                                    ::
@@ -372,9 +375,9 @@ The above commands explained:
 * `--debug-connections` prints more information about the connections made between agents
 * `--auto-provision` makes sure that ACA-Py creates a wallet even if such a wallet does not exist. Normally, the command `aca-py provision` is used to create a wallet.
 * `--wallet-type`, `--wallet-name`, and `--wallet-key` are used to create the wallet. They key is used for read and write to the sqlite db. The wallet is found in `~./.indy_client/wallet`
-* `--auto-accept-invites` and `--auto-accept-requests` set ACA-Py instances to automatically accepts invites and requests as they come in.
+* `--auto-accept-invites` and `--auto-accept-requests` set ACA-Py instances to automatically accepts connection invites and connection requests as they come in.
 
-### Starting a holder 
+### Starting a credential holder Bob
 
 Now we can start Bob.
 
@@ -396,6 +399,7 @@ aca-py start \
 --auto-accept-invites \
 --auto-accept-requests
 
+>
 
 ::::::::::::::::::::::::::::::::::::::::::::::
 :: Bob                                      ::
@@ -422,7 +426,9 @@ Listening...
 
 The commands are similar with the exception that Bob does not register to the VDR as a holder. Also, `--wallet-local-did` is used to generate a private pairwise DID for Bob and Alice. For more on connection protocols, see [Aries RFC 0160](https://github.com/hyperledger/aries-rfcs/tree/9b0aaa39df7e8bd434126c4b33c097aae78d65bf/features/0160-connection-protocol).
 
-### Creating a schema and credential definition
+### The issuer creates a schema and credential definition
+
+Alice can now issue her credential schema and her credential definition. First the schema:
 
 ```bash
 curl -X POST http://localhost:11000/schemas \
@@ -458,7 +464,7 @@ This returns:
 
 You can find the schema browsing the VDR: http://localhost:9000/browse/domain?page=1&query=&txn_type=101. 
 
-Alice now creates a credential definition with the schema.
+Alice now creates a credential definition with the newly created schema.
 
 ```bash
 curl -X POST http://localhost:11000/credential-definitions \
@@ -479,13 +485,13 @@ This returns the credential definition:
 
 You can find the credential schema browsing the VDR: http://localhost:9000/browse/domain?page=1&query=&txn_type=102
 
-To issue a credential, Alice and Bob need to connect.
+To issue a credential, Alice and Bob need to connect. A connection follows an invite. There exist both public and non-public invites. Public invitations allow anyone to connect with the issue based on information in the VDR only. A non-public invitation is self-contained. Below, we will rely on a non-public connection invitation simply because it was the one I got working first.
 
-### Private connections
+### Non-public connection invitation
 
-With a private connection, Alice sends over an object to Bob that contains all the information Bob needs without having to browse a VDR.
+With a non-public connection, Alice sends over an object to Bob that contains all the information Bob needs without having to browse a VDR.
 
-#### Creating a private connection invite
+#### Creating a non-public connection invite
 
 ```bash
 curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
@@ -614,13 +620,22 @@ Alice and Bob share a connection. The flow depends on which party initiates the 
 
 Step 1 is optional and the flow can start at step 2. Optionally, the entire offer part can be skipped and then the flow starts at step 3. Below, we run the entire process to demonstrate the entire possible flow.
 
+The steps can be very confusing the first time around (especially when multiple VC are invovled). To keep track of the particular VC flow, each agent assigns a `cred_ex_id` value to the object. Note that both agents can find the existing state machines they are handling using some shared value, e.g., their `connection_id`.
+
 #### Step 1
+
+Desired state transitions:
+
+* Alice: None > proposal-received
+* Bob: None > proposal-sent
+
+Bob sends a proposal:
 
 ```bash
 curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal \
  -H "Content-Type: application/json" -d '{
   "comment": "I want this",
-  "connection_id": "",
+  "connection_id": "644cd762-bf83-4ed4-89f2-221fc220c3cf",
   "credential_preview": {
     "@type": "issue-credential/2.0/credential-preview",
     "attributes": [
@@ -637,8 +652,96 @@ curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal \
     ]
   },
   "filter": {
-    "dif": {},
     "indy": {}
   }
 }'
+```
+
+returns the Credential Exchange Record (CER). We note the `cred_ex_id`:
+
+```bash
+curl -X GET "http://localhost:11001/issue-credential-2.0/records?connection_id=644cd762-bf83-4ed4-89f2-221fc220c3cf&state=proposal-sent" -H  "accept: application/json" | jq | grep cred_ex_id
+>   "cred_ex_id": "c56a5b63-add1-4b58-a307-fde6ff0e8e80"
+```
+
+#### Step 2
+
+Desired state transitions:
+
+* Alice: proposal-received > offer-sent
+* Bob: proposal-sent > offer-received
+
+Alice receives the proposal and assigns it a `cred_dx_id`
+```bash
+curl -X GET "http://localhost:11000/issue-credential-2.0/records?connection_id=50a1c481-b87b-4ea5-a48b-9fd9382322f9&state=proposal-received" -H  "accept: application/json" | jq | grep cred_ex_id
+>   "cred_ex_id": "18953612-0d25-41c9-ad08-8a440b9b8774"
+```
+
+Note how Alice's credential exchange id (`18953612-0d25-41c9-ad08-8a440b9b8774`) is not the same as Bob's (`c56a5b63-add1-4b58-a307-fde6ff0e8e80`).
+
+Alice then sends an offer to Bob:
+```bash
+curl -X POST http://localhost:11000/issue-credential-2.0/records/18953612-0d25-41c9-ad08-8a440b9b8774/send-offer \
+ -H "Content-Type: application/json"
+ ```
+
+#### Step 3
+
+Desired state transitions:
+
+* Alice: offer sent > request-received
+* Bob: offer-received > request-sent
+
+```bash
+curl -X POST http://localhost:11001/issue-credential-2.0/records/c56a5b63-add1-4b58-a307-fde6ff0e8e80/send-request
+```
+
+#### Step 4
+
+Desired state transitions:
+
+* Alice: request-received > credential-issued
+* Bob: request-sent > credential-received
+
+```bash
+curl -X POST http://localhost:11000/issue-credential-2.0/records/18953612-0d25-41c9-ad08-8a440b9b8774/issue \
+-H "Content-Type: application/json" -d '{"comment": "Please have this"}'
+```
+
+#### Step 5
+
+Desired state transitions:
+
+* Alice: credential-issued > None
+* Bob: credential-received > None
+
+```bash
+curl -X POST http://localhost:11001/issue-credential-2.0/records/c56a5b63-add1-4b58-a307-fde6ff0e8e80/store \
+-H "Content-Type: application/json" -d '{}'
+```
+
+Bob now stores the credential and notifies Alice. To see Bob's VC:
+
+```bash
+curl -X GET "http://localhost:11001/credentials" -H  "accept: application/json"
+```
+
+which returns:
+
+```bash
+{
+  "results": [
+    {
+      "referent": "4a988ac0-501e-4d2e-9996-535db9633bbc",
+      "attrs": {
+        "name": "Bob",
+        "age": "30"
+      },
+      "schema_id": "PLEVLDPJQMJvPLyX3LgB6S:2:basic-schema:1.0",
+      "cred_def_id": "PLEVLDPJQMJvPLyX3LgB6S:3:CL:8:default",
+      "rev_reg_id": null,
+      "cred_rev_id": null
+    }
+  ]
+}
 ```
