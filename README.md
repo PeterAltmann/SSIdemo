@@ -468,8 +468,8 @@ Alice now creates a credential definition with the newly created schema.
 
 ```bash
 curl -X POST http://localhost:11000/credential-definitions \
--H 'Content-Type: application/json' \
--d '{
+  -H 'Content-Type: application/json' \
+  -d '{
   "schema_id": "PLEVLDPJQMJvPLyX3LgB6S:2:basic-schema:1.0",
   "tag": "default"
 }'
@@ -495,8 +495,8 @@ With a non-public connection, Alice sends over an object to Bob that contains al
 
 ```bash
 curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
-> -H "Content-Type: application/json" \
-> -d '{"handshake_protocols": ["did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"], "use_public_did": false, "my_label": "Alice"}'
+  -H "Content-Type: application/json" \
+  -d '{"handshake_protocols": ["did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"], "use_public_did": false, "my_label": "Alice"}'
 ```
 
 This returns the following private invitation:
@@ -635,7 +635,8 @@ Bob sends a proposal:
 
 ```bash
 curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal \
- -H "Content-Type: application/json" -d '{
+ -H "Content-Type: application/json" \
+ -d '{
   "comment": "I want this",
   "connection_id": "644cd762-bf83-4ed4-89f2-221fc220c3cf",
   "credential_preview": {
@@ -684,8 +685,8 @@ Note how Alice's credential exchange id (`18953612-0d25-41c9-ad08-8a440b9b8774`)
 Alice then sends an offer to Bob:
 ```bash
 curl -X POST http://localhost:11000/issue-credential-2.0/records/18953612-0d25-41c9-ad08-8a440b9b8774/send-offer \
- -H "Content-Type: application/json"
- ```
+  -H "Content-Type: application/json"
+```
 
 #### Step 3: Holder sends a request
 
@@ -707,7 +708,7 @@ Desired state transitions:
 
 ```bash
 curl -X POST http://localhost:11000/issue-credential-2.0/records/18953612-0d25-41c9-ad08-8a440b9b8774/issue \
--H "Content-Type: application/json" -d '{"comment": "Please have this"}'
+  -H "Content-Type: application/json" -d '{"comment": "Please have this"}'
 ```
 
 #### Step 5 & 6: Holder stores credential and confirms receipt
@@ -719,7 +720,7 @@ Desired state transitions:
 
 ```bash
 curl -X POST http://localhost:11001/issue-credential-2.0/records/c56a5b63-add1-4b58-a307-fde6ff0e8e80/store \
--H "Content-Type: application/json" -d '{}'
+  -H "Content-Type: application/json" -d '{}'
 ```
 
 Bob now stores the credential and notifies Alice. 
@@ -732,7 +733,7 @@ curl -X GET "http://localhost:11001/credentials" -H  "accept: application/json"
 
 which returns:
 
-```bash
+```JSON
 {
   "results": [
     {
