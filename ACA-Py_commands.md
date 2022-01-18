@@ -178,24 +178,32 @@ Let us focus on the argumnents that differ from the provision mode.
 * `--ws-timeout-interval` when using Websocket Inbound Transport, timeout the connection after specified seconds
 
 **Mediation**
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
+* `--open-mediation` enables automatic granting of mediation. Agents may request msg mediation.
+* `--default-mediator-id` sets the default mediator by ID
+* `--clear-default-mediator` clear the stored default mediator
+
+**Wallet functions are the same as provision**
+
+**Multitenant**
+* `--multitenant` enables multitenant mode
+* `--jwt-secret` specifies the secret to be used for JSON Web Token creation and verification
+* `--multitenant-admin` enables the multi-tenant admin API
+* `--multitenancy-config` specifies multitenance configuration (eg., sets `"wallet_type": ""` and `"wallet_name": ""`).
+
+**Endorsement**
+* `--endorser-protocol-role` specify the role of `author` or `endorser` which this agent has in the network. Authors request tx endorsement from endorsers.
+* `--endorser-invitation` for tx authors, specifies the endorser agent to connect to for tx endorsement 
+* `--endorser-public-did` for tx authors, specifies the endorser agent DID
+* `--endorser-alias` for tx authors, sets an alias the the endorser connection used to endorse a tx
+* `--auto-request-endorsement` for tx authors, automatically requests endorsement for all tx
+* `--auto-endorse-transaction` for endorsers, automatically endorses any endorsement request
+* `--auto-write-transactions` for authors, specifies whether to automatically write any endorsed tx
+* `--auto-create-revocation-transactions` for authors, specify whether to automatically create transactions for a cred def's revocation registry.
 
 TODO
 1. Difference between connection invite and a connection request
 2. What is an introduction invitation?
 3. What is a forward?
+4. How does mediation work?
+5. What is multitentant?
+6. How does the `--auto-create-revocation-transactions` work?
