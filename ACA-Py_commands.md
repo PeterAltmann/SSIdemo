@@ -125,6 +125,7 @@ Let us focus on the argumnents that differ from the provision mode.
 * `--help-link` provides an URL to an admin interface help page that a controller can request from an admin agent.
 * `--webhook-url` sends webhooks containing internal state changes
 * `--admin-client-max-request-size` sets the maximum client request size to an admin server
+* `--auto-provision` if the requested profile does not exist, then it will be initialized when the given parameters
 
 **Debug**
 * `--debug` a remote debugging service
@@ -165,17 +166,18 @@ Let us focus on the argumnents that differ from the provision mode.
 * `--emit-new-didcomm-mime-type` send packed agent msg with DIDComm MIME type. See [aries rfc 0044](https://github.com/hyperledger/aries-rfcs/blob/main/features/0044-didcomm-file-and-mime-types/README.md).
 * `--exch-use-unencrypted-tags` store tags for exchange protocols using unencrypted rather than encrypted tags
 
-**Start-up**
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
-* `--`
+**Transport**
+* `--inbound-transport` and `--outband-transport` sets the inbound and outbound transports on which an agent listens to msgs and sends msgs. Multiple interfaces possible by setting the argument multiple times.
+* `--outbound-queue` sets the location of the outbound queue engine
+* `--label` specifies the label for the agent
+* `--image-url` specifies the image url for the agent
+* `--max-message-size` sets max inbound message size for agent
+* `--enable-undelivered-queue` enables an agent to hold outbound msgs to an agent that does not have an endpoint
+* `--max-outbound-retry` sets the max retry attempts for undelivered outbound messages
+* `--ws-heartbeat-interval` when using Websocket Inbound Transport, sends a ws ping as specified in seconds
+* `--ws-timeout-interval` when using Websocket Inbound Transport, timeout the connection after specified seconds
+
+**Mediation**
 * `--`
 * `--`
 * `--`
