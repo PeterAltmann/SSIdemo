@@ -139,6 +139,20 @@ Let us focus on the argumnents that differ from the provision mode.
 * `--invite-multi-use` flags the generated invite for multi-use
 * `--invite-public` flags the invite as public
 * `--invite-metadata-json` adds metadata json to the invititation if created with the `--invite` argument
+* `--test-suite-endpoint` URL endpoint for msgs sent to the test suite agent
+* `--auto-accept-invites` automatically accept invites
+* `--auto-accept-requests` automatically accepts connection requests
+* `--auto-respond-messages` set up an autoresponse to received messages
+* `--auto-respond-credential-proposal` automatically responds to credential requests with a corresponding credential offer
+* `--auto-respond-credential-offer` automatically responds to an Indy credential offer with a credential request
+* `--auto-respond-credential-request` automatically responds with a corresponding credential
+* `--auto-respond-presentation-proposal` automatically respond with a presentation request
+* `--auto-respond-presentation-request` automatically respond with a presentation
+* `--auto-store-credential` automatically stores a credential upon receipt
+* `--auto-verify-presentation` automatically verify a presentation upon receipt
+
+**Protocol**
+* `--`
 * `--`
 * `--`
 * `--`
@@ -153,3 +167,5 @@ Let us focus on the argumnents that differ from the provision mode.
 * `--`
 * `--`
 
+TODO
+1. Difference between connection invite and a connection request
