@@ -152,6 +152,32 @@ Let us focus on the argumnents that differ from the provision mode.
 * `--auto-verify-presentation` automatically verify a presentation upon receipt
 
 **Protocol**
+* `--auto-ping-connection` pings the agent to confirm connection is active after a connection response is accepted.
+* `--auto-accept-intro-invitation-requests` automatically accept introduction invitations
+* `--invite-base-url` base URL to use when formatting connection invitations in URL format
+* `--monitor-ping` send a webhook when a ping is received
+* `--monitor-forward` send a webhook when a forward is received
+* `--public-invites` send invitation out, and receive connection requests using the piblic DID for the agent
+* `--timing` and `timing-log` used for timing information which can be sent in the response messages
+* `--trace`, `--trace-target`, `--trace-tag`, and `--trace-label` are used to generate specific tracing events and tag and label these event traces.
+* `--preserve-exchange-records` allows an agent to keep the exchange records even after an exchange has completed
+* `--emit-new-didcomm-prefix` emitt protocol message with new DIDComm prefix (eg., https://didcomm.org instead of `did:sov:<id>;spec`)
+* `--emit-new-didcomm-mime-type` send packed agent msg with DIDComm MIME type. See [aries rfc 0044](https://github.com/hyperledger/aries-rfcs/blob/main/features/0044-didcomm-file-and-mime-types/README.md).
+* `--exch-use-unencrypted-tags` store tags for exchange protocols using unencrypted rather than encrypted tags
+
+**Start-up**
+* `--`
+* `--`
+* `--`
+* `--`
+* `--`
+* `--`
+* `--`
+* `--`
+* `--`
+* `--`
+* `--`
+* `--`
 * `--`
 * `--`
 * `--`
@@ -169,3 +195,5 @@ Let us focus on the argumnents that differ from the provision mode.
 
 TODO
 1. Difference between connection invite and a connection request
+2. What is an introduction invitation?
+3. What is a forward?
