@@ -985,11 +985,7 @@ To see Bob's company registration VC:
 
 which returns 
 
-```bash
-$ curl -X GET "http://localhost:11001/credentials" -H "accept: application/json" | jq
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100   768  100   768    0     0   187k      0 --:--:-- --:--:-- --:--:--  187k
+```JSON
 {
   "results": [
     {
@@ -1011,5 +1007,5 @@ $ curl -X GET "http://localhost:11001/credentials" -H "accept: application/json"
     }
   ]
 }
-```
 
+```
