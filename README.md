@@ -364,7 +364,7 @@ aca-py start \
 Listening...
 ```
 
-The above commands explained:
+The above commands explained (for a more detailed look at the various arguments, see the [ACA-Py commands list](https://github.com/PeterAltmann/SSIdemo/blob/main/ACA-Py_commands.md)):
 
 * `--label` sets the name for the instance. This is the name that the WalletApp will see when you try to make a connection or when you receive a credential.
 * `-it` and `ot` sets the inbound and outbound transport methods that ACA-Py will use when communicating with other ACA-Py instances.
