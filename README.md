@@ -979,6 +979,37 @@ curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal  -H "Cont
 }'
 ```
 
-To see Bob's VC:
+To see Bob's company registration VC:
 
-curl -X GET "http://localhost:11001/credentials" -H  "accept: application/json"
+`curl -X GET "http://localhost:11001/credentials" -H  "accept: application/json"` 
+
+which returns 
+
+```bash
+$ curl -X GET "http://localhost:11001/credentials" -H "accept: application/json" | jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   768  100   768    0     0   187k      0 --:--:-- --:--:-- --:--:--  187k
+{
+  "results": [
+    {
+      "referent": "eb53f090-ad9f-4e6f-89fe-c918b4e6c771",
+      "attrs": {
+        "address": "Norrskensvägen 12, 851 81 SUNDSVALL",
+        "signatory_power": "The board of directors is inteitled to sign on behalf of the company. Signatory power individually by the board members.",
+        "share_capital": "KSEK 50",
+        "board_members": "8207728-2397 Andersson, Filip, Atmosfärstigen 20, 851 81 SUNDSVALL",
+        "registration_number": "556907-XXXX",
+        "registered_office": "Sundsvall",
+        "business_name": "Företaget i Sundsvall Aktiebolag",
+        "board_chair": "820726-2398 Al Samed, Mohamed, Stjärnallén 40, 851 81 SUNDSVALL"
+      },
+      "schema_id": "h2aCQwapPeZtdoHH1VAh6:2:e-VC-reg:1.0",
+      "cred_def_id": "h2aCQwapPeZtdoHH1VAh6:3:CL:23:default",
+      "rev_reg_id": null,
+      "cred_rev_id": null
+    }
+  ]
+}
+```
+
