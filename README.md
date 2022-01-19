@@ -926,7 +926,7 @@ Aktiebolaget will now submit a credential proposal.
 
 ```bash
 curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal  -H "Content-Type: application/json"  -d '{
-  "comment": "I want this",
+  "comment": "I want a company registration VC",
   "connection_id": "dfd0e463-8f61-4297-b76f-85341567720a",
   "credential_preview": {
     "@type": "issue-credential/2.0/credential-preview",
@@ -939,37 +939,37 @@ curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal  -H "Cont
        {
         "mime-type": "text/plain",
         "name": "registration_number", 
-        "value": "test"
+        "value": "556907-XXXX"
       },
       {
         "mime-type": "text/plain",
         "name": "board_chair", 
-        "value": "Chairperson"
+        "value": "820726-2398 Al Samed, Mohamed, Stjärnallén 40, 851 81 SUNDSVALL"
       },
       {
         "mime-type": "text/plain",
         "name": "board_members", 
-        "value": "Member1, Member2"
+        "value": "8207728-2397 Andersson, Filip, Atmosfärstigen 20, 851 81 SUNDSVALL"
       },
       {
         "mime-type": "text/plain",
         "name": "signatory_power", 
-        "value": "The board"
+        "value": "The board of directors is inteitled to sign on behalf of the company. Signatory power individually by the board members."
       },
       {
         "mime-type": "text/plain",
         "name": "business_name", 
-        "value": "test"
+        "value": "Företaget i Sundsvall Aktiebolag"
       },
       {
         "mime-type": "text/plain",
         "name": "address", 
-        "value": "test"
+        "value": "Norrskensvägen 12, 851 81 SUNDSVALL"
       },
       {
         "mime-type": "text/plain",
         "name": "registered_office", 
-        "value": "test"
+        "value": "Sundsvall"
       }
     ]
   },                              
