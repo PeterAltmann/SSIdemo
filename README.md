@@ -784,8 +784,7 @@ admin: [0.0.0.0, 11000]
 admin-insecure-mode: true
 genesis-url: http://localhost:9000/genesis
 inbound-transport:
-   - [http, 0.0.0.0, 8001]
-   - [ws, 0.0.0.0, 8002]
+   - [http, 0.0.0.0, 8000]
 outbound-transport: http
 endpoint: http://localhost:8000
 wallet-type: indy
@@ -803,14 +802,13 @@ and
 
 ```YAML
 label: Aktiebolaget
-admin: [0.0.0.0, 11010]
+admin: [0.0.0.0, 11001]
 admin-insecure-mode: true
 genesis-url: http://localhost:9000/genesis
 inbound-transport:
-   - [http, 0.0.0.0, 8011]
-   - [ws, 0.0.0.0, 8012]
+   - [http, 0.0.0.0, 8001]
 outbound-transport: http
-endpoint: http://localhost:8010
+endpoint: http://localhost:8001
 wallet-type: indy
 wallet-name: Aktiebolaget1
 debug-connections: false
@@ -844,10 +842,6 @@ We start the Aktiebolaget agent from the configuration file:
 
 `aca-py start --arg-file config_ab.yaml`
 
-Both are started and we note the ports required to access openAPI:
-* 11000 to Bolagsverket and 
-* 11010 to Aktiebolaget
-
 #### Registering schemas and credential definitions
 
 Bolagsverket first need to register schemas and credential definitions for the various verifiable credentials it will issue. One important piece of information is the company registration certificate. In the example below, we will use [this e-certificate](https://bolagsverket.se/polopoly_fs/1.9371!/e-certificate-registration-eng.pdf) as a guide for our first schema.
@@ -858,53 +852,34 @@ curl -X POST http://localhost:11000/schemas \
 -H 'Content-Type: application/json' \
 -d '{
   "attributes": [
-  "Registration_number",
-  "Date_of_registration_of_the_company",
-  "Date_of_registration_of_current_name",
-  "Document_created_on",
-  "Business_name",
-  "Address",
-  "Registered_office",
-  "Note",
-  "Type",
-  "Company_formed_date",
-  "Share_capital",
-  "Share_capital_min",
-  "Share_capital_max",
-  "Number_of_shares",
-  "Board_member,_chair_of_the_board",
-  "Board_members",
-  "Deputy_board_members",
-  "Auditors",
-  "Principally_responsible_auditor",
-  "Signatory_power" 
+  "registration_number",
+  "business_name",
+  "address",
+  "registered_office",
+  "signatory_power",
+  "board_members",
+  "board_chair",
+  "share_capital"
   ],
-  "schema_name": "e-certificate-registration",
+  "schema_name": "e-VC-reg",
   "schema_version": "1.0"
 }'
 ```
 
-You can find the schema browsing the VDR: http://localhost:9000/browse/domain?page=1&query=e-certificate-registration
-
-<img width="600" alt="Schema" src="https://user-images.githubusercontent.com/30799110/150155047-cfb9a445-e5a2-4136-88fe-3742b30be2fd.png">
-
+You can find the schema browsing the VDR: http://localhost:9000/browse/domain?page=1&query=e-VC-reg
 
 Alice now creates a credential definition with the newly created schema (takes ~10 seconds).
 
 ```bash
-curl -X POST http://localhost:11000/credential-definitions \
-  -H 'Content-Type: application/json' \
-  -d '{
-  "schema_id": "h2aCQwapPeZtdoHH1VAh6:2:e-certificate-registration:1.0",
-  "tag": "default"
-}'
+curl -X POST "http://localhost:11000/credential-definitions" \
+  -H  "accept: application/json" \
+  -H  "Content-Type: application/json" \
+  -d '{"schema_id": "h2aCQwapPeZtdoHH1VAh6:2:e-VC-reg:1.0",  "tag": "default"}'
 ```
 
 You can find the credential defintion on the VDR: http://localhost:9000/browse/domain?page=1&query=default
 
-<img width="600" alt="Credential definition" src="https://user-images.githubusercontent.com/30799110/150155192-239b4228-8cb6-4bc8-b272-267efe94a31f.png">
-
-Bolagsverket now has what it needs to issue a company registration certificate.
+Bolagsverket now has what it needs to issue a company registration VC.
 
 #### Forming a connection between Bolagsverket and Aktiebolaget
 
@@ -919,29 +894,29 @@ curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
 This returns a private invitation with a service endpoint. Bob needs to receive the invitation object that Alice generated above to do:
 
 ```bash
-curl -X POST "http://localhost:11010/out-of-band/receive-invitation" \
+curl -X POST "http://localhost:11001/out-of-band/receive-invitation" \
    -H 'Content-Type: application/json' \
    -d '{
-    "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
-    "@id": "e2f8b726-be77-4dca-a409-fdb6fa9c028f",
-    "label": "Bolagsverket",
-    "services": [
-      {
-        "id": "#inline",
-        "type": "did-communication",
-        "recipientKeys": [
-          "did:key:z6MkmdE3XS7QytKbLMCPDNfLKqCUwwL9QxqmbHq886VP9rEY"
-        ],
-        "serviceEndpoint": "http://localhost:8000"
-      }
-    ],
-    "handshake_protocols": [
-      "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
-    ]
-  }'
+  "@type": "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/out-of-band/1.0/invitation",
+  "@id": "936eb9e9-d57b-44fc-8411-f65b5291b0d5",
+  "services": [
+    {
+      "id": "#inline",
+      "type": "did-communication",
+      "recipientKeys": [
+        "did:key:z6Mkezj9erf4qJ6tWPQZmreQXKDgYKw8hANoC2jU2RrtApqM"
+      ],
+      "serviceEndpoint": "http://localhost:8000"
+    }
+  ],
+  "label": "Bolagsverket",
+  "handshake_protocols": [
+    "did:sov:BzCbsNYhMrjHiqZDTUASHg;spec/didexchange/1.0"
+  ]
+}'
 ```
 
-The two are now connected. Aktiebolaget's connection specific DID is found using `curl -X GET "http://localhost:11010/connections" -H  "accept: application/json" | jq | grep "my_did"`
+The two are now connected. Aktiebolaget's connection specific DID is found using `curl -X GET "http://localhost:11001/connections" -H  "accept: application/json" | jq | grep "connection_id"`
 
 #### The company registration certificate verifiable credential flow
 
@@ -950,122 +925,60 @@ It just dawned on me that the schema name should probably not include certificat
 Aktiebolaget will now submit a credential proposal.
 
 ```bash
-curl -X POST http://localhost:11010/issue-credential-2.0/send-proposal \
- -H "Content-Type: application/json" \
- -d '{
-  "comment": "I want to get a company registration VC",
-  "connection_id": "75972cbc-2ed1-4c56-9348-3fb896420dfe",
+curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal  -H "Content-Type: application/json"  -d '{
+  "comment": "I want this",
+  "connection_id": "dfd0e463-8f61-4297-b76f-85341567720a",
   "credential_preview": {
     "@type": "issue-credential/2.0/credential-preview",
     "attributes": [
-      {
+       {
         "mime-type": "text/plain",
-        "name": "address", 
-        "value": "Norrskensvägen 12 851 81 SUNDSVALL"
+        "name": "share_capital", 
+        "value": "KSEK 50"
+      },
+       {
+        "mime-type": "text/plain",
+        "name": "registration_number", 
+        "value": "test"
       },
       {
         "mime-type": "text/plain",
-        "name": "auditors", 
-        "value": "556908-XXXX Revisionsbolaget i Sundsvall AB, Storgatan 60, 851 81 SUNDSVALL. Represented by: 820729-2395"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "board_member,_chair_of_the_board", 
-        "value": "820726-2398 Al Samed, Mohamed, Stjärnallén 40, 851 81 SUNDSVALL"
+        "name": "board_chair", 
+        "value": "Chairperson"
       },
       {
         "mime-type": "text/plain",
         "name": "board_members", 
-        "value": "820727-2397, Andersson, Filip, Atmosfärstigen 20, 851 81 SUNDSVALL"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "business_name", 
-        "value": "Företaget i Sundsvall Aktiebolag"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "company_formed_date", 
-        "value": "2013-03-21"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "date_of_registration_of_current_name", 
-        "value": "2013-05-24"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "date_of_registration_of_the_company", 
-        "value": "2013-05-24"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "deputy_board_members", 
-        "value": "820728-2396 Johansson, Oskar, Planetgränd 12, 851 81 SUNDSVALL"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "document_created_on", 
-        "value": "2016-02-19 13:00"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "Note", 
-        "value": ""
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "number_of_shares", 
-        "value": "500"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "principally_responsible_auditor", 
-        "value": "820729-2395 Lindberg, Per, Satellitgatan 18, 851 81 SUNDSVALL"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "principally_responsible_auditor", 
-        "value": "820729-2395 Lindberg, Per, Satellitgatan 18, 851 81 SUNDSVALL"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "registered_office", 
-        "value": "Sundsvall"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "registration_number", 
-        "value": "556907-XXXX"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "share_capital", 
-        "value": "SEK 50,000"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "share_capital_max", 
-        "value": "SEK 200,000"
-      },
-      {
-        "mime-type": "text/plain",
-        "name": "share_capital_min", 
-        "value": "SEK 50,000"
+        "value": "Member1, Member2"
       },
       {
         "mime-type": "text/plain",
         "name": "signatory_power", 
-        "value": "The board of directors is entitled to sign on behalf of the company. Signatory power individually by the board members."
+        "value": "The board"
       },
       {
         "mime-type": "text/plain",
-        "name": "type", 
-        "value": "Private limited liability company"
+        "name": "business_name", 
+        "value": "test"
+      },
+      {
+        "mime-type": "text/plain",
+        "name": "address", 
+        "value": "test"
+      },
+      {
+        "mime-type": "text/plain",
+        "name": "registered_office", 
+        "value": "test"
       }
     ]
-  },
-  "filter": {
+  },                              
+  "filter": {                          
     "indy": {}
-  }
+  }    
 }'
+```
+
+To see Bob's VC:
+
+curl -X GET "http://localhost:11001/credentials" -H  "accept: application/json"
