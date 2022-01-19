@@ -954,7 +954,7 @@ curl -X POST http://localhost:11001/issue-credential-2.0/send-proposal  -H "Cont
       {
         "mime-type": "text/plain",
         "name": "signatory_power", 
-        "value": "The board of directors is inteitled to sign on behalf of the company. Signatory power individually by the board members."
+        "value": "The board of directors is entitled to sign on behalf of the company. Signatory power individually by the board members."
       },
       {
         "mime-type": "text/plain",
@@ -992,7 +992,7 @@ which returns
       "referent": "eb53f090-ad9f-4e6f-89fe-c918b4e6c771",
       "attrs": {
         "address": "Norrskensvägen 12, 851 81 SUNDSVALL",
-        "signatory_power": "The board of directors is inteitled to sign on behalf of the company. Signatory power individually by the board members.",
+        "signatory_power": "The board of directors is entitled to sign on behalf of the company. Signatory power individually by the board members.",
         "share_capital": "KSEK 50",
         "board_members": "8207728-2397 Andersson, Filip, Atmosfärstigen 20, 851 81 SUNDSVALL",
         "registration_number": "556907-XXXX",
