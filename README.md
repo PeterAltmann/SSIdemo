@@ -2,23 +2,23 @@
 
 This text aims to document the design process with the Authentic Company Data project at Bolagsverket. Digital identity is rapidly evolving. Open source projects like Hyperledger Aries and Ursa projects provide a set of protocols that, when paired with DLTs such as Hyperledger Indy or Besu, can be used for building distributed applications built on authentic and secure data.
 
-The text assumes a high level familiarity with the [Trust over IP concept](https://trustoverip.org/toip-model/). The Linux Foundation added ToIP in to its projects in 2020. The mission of the ToIP foundation is to simplify and standardize how trust is established online, i.e., to provide mechanisms for how interacting entities can trust the credential exchanges they are engaged in. At its core, the ToIP introduces three actors: an issuer of credentials, a holder of credentials, and a verifier of credentials. The concept relies heavily on [the Verifiable Credentials data model](https://www.w3.org/TR/vc-data-model/). 
+A core element of this text is the [Trust over IP concept](https://trustoverip.org/toip-model/). The Linux Foundation added ToIP in to its projects in 2020. The mission of the ToIP foundation is to simplify and standardize how trust is established online, i.e., to provide mechanisms for how interacting entities can trust the credential exchanges they are engaged in. At its core, the ToIP introduces three actors: an issuer of credentials, a holder of credentials, and a verifier of credentials. The concept relies heavily on [the Verifiable Credentials data model](https://www.w3.org/TR/vc-data-model/). 
 
 <img src="https://courses.edx.org/assets/courseware/v1/e6878fa7000fb538a7e8b9dec066d0b1/asset-v1:LinuxFoundationX+LFS173x+3T2021+type@asset+block/LFS172x_CourseGraphics_V1-04.png" alt="VC data model" width="500"/>
 
 **Fig 1**. *The Verifiable Credentials Data Model.*
 
-The concept introduces a technology and governance stack that affors a very high degree of privacy and user control to the credential holder. The ToIP concept can be viewed as an alternative to existing centralized and federated identity models where the user has very limited control over their online idenity and data. 
+The concept introduces a technology and governance stack that affors a very high degree of privacy and user control to the credential holder. The ToIP concept can be viewed as an alternative to existing centralized and federated identity models where the user has very limited control over their online idenity and data. However, the ToIP concept does not assume any trust model for identity related data and can be configured to support many kinds of trust models. 
 
 ## Objectives
 
-The specific objectives of this text is to use a series of labs to demonstrate how Verifiable Credentials (or equivalent authenticated data) works and to motivate design choices along the way. This text will focus primarily on Layers 1-3 on the ToIP technology stack.
+The specific objectives of this text is to build a good foundation for understanding ToIP compliant digital identities. The text will use a series of labs to demonstrate how Verifiable Credentials (or equivalent authenticated data) works and to motivate design choices along the way. The main focus of the text is  Layers 1-3 on the ToIP technology stack.
 
 <img src="https://miro.medium.com/max/1400/1*DgPBpnT_RxDEnd_ptdynkQ.png" alt="drawing" width="800"/>
 
 **Fig 2.** *The dual stack ToIP ([source](https://www.dizme.io/)).*
 
-Where necessary, we use default settings for the governance stacks. More specifically,
+Also, the default settings for the governance stacks are often used since the focus is on the technology stack. More specifically:
 
 * Layer 1: establishing cryptographic roots of trust labs:
   1. How to establish a secure and privacy connection between two actors.
@@ -30,6 +30,8 @@ Where necessary, we use default settings for the governance stacks. More specifi
   1. Offering, requesting, and creating verifiable credentials
   2. Verifying verifiable credentials
   3. Enabling advanced features like selective disclosure and predicate proofs
+
+Note that the lab numbering will not correspond to the layer numbering.
 
 ## Terminology and key concepts
 
@@ -49,6 +51,7 @@ Flavors Explained](https://www.lfph.io/wp-content/uploads/2021/02/Verifiable-Cre
 * Framework. The framework is one out of two logical components that enables an agent to interact. The framework is what knows how to establish a connection, send a message, create a credential etc. There exist many frameworks, the most popular is arguably the frameworks that build on the Hyperledger Aries protocols. Most of the labs herein, build on the Aries framework called ACA-Py unless otherwise specified. The ACA-Py is a python based framework focused on enterprise agents.
 * Controller. The controller is the second logical component of an agent. The framework does not know when to establish a connection or when to issue a credential. The controller encodes the organizations business rules and is responsible for telling the framework what to do and when to do it.
 
+There are many protocols, technologies, implementations etc., mentioned in the text below. To facilitate reading, please se the following terminology/concepts/terms map in [this link](https://user-images.githubusercontent.com/30799110/150362394-5d0319ae-7bad-4674-863c-d6dd35346ea9.png).
 
 # General setup guide for the labs
 
