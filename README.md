@@ -64,4 +64,4 @@ In Lab 2. we move beyond the demos and take a closer look at how we can use ACA-
 
 ## Lab 3
 
-In Lab 3. we take a closer look at ACA-Py and see how we can use it to start our own agents and issue a VC. See this [link](https://github.com/PeterAltmann/SSIdemo/blob/main/LAB3.md). 
+In Lab 3. we continue taking a closer look at ACA-Py and see how we can use it to start our own agents and issue a VC within the context of Authentic Company Data. See this [link](https://github.com/PeterAltmann/SSIdemo/blob/main/LAB3.md). 
