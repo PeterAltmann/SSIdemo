@@ -770,4 +770,4 @@ This concludes Lab 2.
 
 ## Lab 3
 
-In Lab 3. we take a closer look at ACA-Py and see how we can use it to start our own agents and issue a VC. See this [link](https://github.com/PeterAltmann/SSIdemo/blob/main/LAB3). 
+In Lab 3. we take a closer look at ACA-Py and see how we can use it to start our own agents and issue a VC. See this [link](https://github.com/PeterAltmann/SSIdemo/blob/main/LAB3.md). 
