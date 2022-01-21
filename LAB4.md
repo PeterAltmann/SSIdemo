@@ -40,7 +40,7 @@ The above is sufficient understanding for the Lab. For more details, please see 
 
 ## Connections in ACA-Py
 
-ACA-Py implements the DIDComm v2 specs. In the previous Labs, we have relied on the Out-Of-Band (OOB) protocol to connect the agents. Commonly, OOB messages are presented in the form of a URL (or a QR code thereof).
+ACA-Py implements the DIDComm v2 specs. In the previous Labs, we have relied on the Out-Of-Band (OOB) protocol to connect the agents (specified in [Aries RFC0434](https://github.com/hyperledger/aries-rfcs/tree/2da7fc4ee043effa3a9960150e7ba8c9a4628b68/features/0434-outofband)). Commonly, OOB messages are presented in the form of a URL (or a QR code thereof).
 
 Start two agents:
 
@@ -57,7 +57,7 @@ With `--public-invites`, we prepare the agents to accept connection invites base
 
 Note that in AIP 1.0, ACA-Py uses [Aries RFC0160](https://github.com/hyperledger/aries-rfcs/blob/master/features/0160-connection-protocol/README.md). For AIP 2.0, ACA-Py will use [Aries RFC0023](https://github.com/hyperledger/aries-rfcs/tree/main/features/0023-did-exchange) (superseded RFC0160) and the OOB protocol detailed in [Aries RFC0023](https://github.com/hyperledger/aries-rfcs/blob/main/features/0434-outofband/README.md).
 
-#### Bash
+#### Bash using Aries RFC0160
 Bolagsverket creates a single use public invite:
 
 ```bash
@@ -86,7 +86,7 @@ Once sent, the connection changes its `rfc23_state` to `request-sent`, and when 
 
 Show active connections using `curl -X GET "http://localhost:<admin port>/connections?state=completed" -H  "accept: application/json"`.
 
-#### Swagger
+#### Swagger using Aries RFC0160
 
 Create invitation
 1. Navigate to http://localhost:11000/api/doc#/connection/post_connections_create_invitation
@@ -113,4 +113,41 @@ Receive invitation
   ```
 3. Set alias to whatever
 
-The agents are now connected.
+#### Connections using `did-exchange`
+
+The DID Exchange protocol requires only the public DID to which to request a connection.
+
+Aktibolaget can issue a request:
+
+```bash
+curl -X POST "http://localhost:11001/didexchange/create-request?their_public_did=h2aCQwapPeZtdoHH1VAh6" -H  "accept: application/json"
+```
+
+And since the Bolagverket agent is setup to autoreply, the connection is established in the background. We confirm:
+
+`curl -X GET "http://localhost:11000/connections" -H  "accept: application/json"`
+
+returns 
+```JSON
+{
+  "results": [
+    {
+      "invitation_mode": "once",
+      "their_label": "Aktiebolaget",
+      "state": "active",
+      "their_did": "W9VGD9L5x1YUyMqNkBAUbk",
+      "connection_protocol": "didexchange/1.0",
+      "their_role": "invitee",
+      "created_at": "2022-01-21T13:47:00.277626Z",
+      "rfc23_state": "completed",
+      "my_did": "Tom7t7EN9aneQHTo1vvgph",
+      "accept": "auto",
+      "request_id": "021f2973-dbb2-4564-8a1d-76e357f19974",
+      "updated_at": "2022-01-21T13:47:00.355116Z",
+      "routing_state": "none",
+      "invitation_key": "NpLUnDKyMhSXPfYyUEPMVwCyPys81LaoEMQjXbsfXkn",
+      "connection_id": "9be27ff6-8d89-4d74-8809-ae0c21ea0f98"
+    }
+  ]
+}
+```
