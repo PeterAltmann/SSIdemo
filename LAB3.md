@@ -102,6 +102,12 @@ You can find the schema:
 * using the schema id: `curl http://localhost:11000/schemas/<schema_id>`
 * or through the `seqNo` value: `curl http://localhost:11000/schemas/<seqNo>`
 
+**NOTE**: *It is possible to create a cred def from any schema. For other networks, see:* 
+* https://indyscan.io/home/SOVRIN_BUILDERNET 
+* http://test.bcovrin.vonx.io/browse/domain?page=1&query=&txn_type=101
+* http://dev.bcovrin.vonx.io/browse/domain?page=1&query=&txn_type=101
+* http://prod.bcovrin.vonx.io/browse/domain?page=1&query=&txn_type=101
+
 Alice now creates a credential definition with the newly created schema (takes ~10 seconds).
 
 ```bash
@@ -251,4 +257,4 @@ which returns
 
 ```
 
-Aktiebolaget now has a VC of their company registration. In future labs, we take a closer look on how they can use this (and other VCs) when conducting business.
+Aktiebolaget now has a VC of their company registration. In future labs, we take a closer look on how they can use this VC (and other VCs) when conducting business.
