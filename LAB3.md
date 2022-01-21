@@ -114,7 +114,11 @@ curl -X POST "http://localhost:11000/credential-definitions" \
   }'
 ```
 
-You can find the credential defintion on the VDR: http://localhost:9000/browse/domain?page=1&query=default
+You can find the credential defintion:
+
+* on the VDR: http://localhost:9000/browse/domain?page=1&query=default
+* using the `/credential-definitions/{id}` endpoint
+* or the corresponding curl command
 
 Bolagsverket now has what it needs to issue a company registration VC.
 
