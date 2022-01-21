@@ -120,7 +120,7 @@ Bolagsverket now has what it needs to issue a company registration VC.
 
 #### Forming a connection between Bolagsverket and Aktiebolaget
 
-Create a non-public connection invite:
+For options on how to create agent connections, see [Lab 4](https://github.com/PeterAltmann/SSIdemo/blob/main/LAB4.md). In this lab, we create a non-public connection invite:
 
 ```bash
 curl -X POST "http://localhost:11000/out-of-band/create-invitation" \
