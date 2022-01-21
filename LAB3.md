@@ -108,7 +108,10 @@ Alice now creates a credential definition with the newly created schema (takes ~
 curl -X POST "http://localhost:11000/credential-definitions" \
   -H  "accept: application/json" \
   -H  "Content-Type: application/json" \
-  -d '{"schema_id": "h2aCQwapPeZtdoHH1VAh6:2:e-VC-reg:1.0",  "tag": "default"}'
+  -d '{
+  "schema_id": "h2aCQwapPeZtdoHH1VAh6:2:e-VC-reg:1.0",
+  "tag": "default"
+  }'
 ```
 
 You can find the credential defintion on the VDR: http://localhost:9000/browse/domain?page=1&query=default
