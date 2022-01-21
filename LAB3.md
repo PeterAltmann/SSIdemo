@@ -96,7 +96,11 @@ curl -X POST http://localhost:11000/schemas \
 }'
 ```
 
-You can find the schema browsing the VDR: http://localhost:9000/browse/domain?page=1&query=e-VC-reg
+You can find the schema:
+
+* browsing the VDR: http://localhost:9000/browse/domain?page=1&query=e-VC-reg
+* using the schema id: `curl http://localhost:11000/schemas/<schema_id>`
+* or through the `seqNo` value: `curl http://localhost:11000/schemas/<seqNo>`
 
 Alice now creates a credential definition with the newly created schema (takes ~10 seconds).
 
