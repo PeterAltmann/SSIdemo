@@ -71,7 +71,7 @@ Wallet:
 * `--wallet-storage-config` required if you are for using `postgres_storage` wallet as configuration.
 * `--wallet-key-derivation-method` specifies the key derivation method used for wallet encryption. If RAW key derivation method is used, also `--wallet-key` parameter is expected.
 * `--wallet-storage-creds` specifies the storage credentials to use for the wallet. Required if you are for using `postgres_storage` wallet.
-* `--replace-public-did` replaces a public DID with a new did from the `--seed` parameter.
+* `--replace-public-did` replaces a public DID with a new did from the `--seed` parameter. Useful when dealing with errors: 'New seed provided which doesn't match the registered public did <did>'. The argument will update the DID in the wallet from the provided seed and can be used to randomize the provision of wallet seeds during development to guarantee clean slate.
 * `--recreate-wallet` if an existing wallet exists with the same name, remove and recreate it during provisioning.
 
 TODO 
