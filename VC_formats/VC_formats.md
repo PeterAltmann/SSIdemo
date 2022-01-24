@@ -2,7 +2,7 @@
 
 All VC's contain attributes about an identity subject. There exits multiple VC formats (for a detailed description, see the following links: [Young infographic](https://github.com/PeterAltmann/SSIdemo/blob/main/VC_formats/Verifiable-Credentials-Flavors-Explained-Infographic.pdf), [Young paper](https://github.com/PeterAltmann/SSIdemo/blob/main/VC_formats/Verifiable-Credentials-Flavors-Explained.pdf), and [W3C proof formats](https://www.w3.org/TR/vc-imp-guide/#proof-formats))
 
-Below, when used in a lab, the specific format will be detailed.
+Below, when used in a lab, the specific format will be detailed. Lab 3-4 uses AnonCred.
 
 ## AnonCred
 
