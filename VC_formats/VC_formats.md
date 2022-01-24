@@ -12,9 +12,9 @@ The AnonCred format has the following properties:
 2. **Verifiable Authorship**. Credential verifiers can validate who the credential issuer and the credential holder are.
 3. **Tamper-evident**. Any alteration to the credential is detectable.
 4. **Privacy-preserving**
-  - *Anonymity*. The credential holder has control over the amount of information the verifier learns in the specific interaction (note that this does not protect the holder from what the verifier can learn outside the specific interaction).
-  - *Unlinkability*. The credential issuer cannot know where the credential, or parts thereof, is used.
-  - *Anti correlation*. The credential cannot be correlated by any other value than the identity attributes contained within.
+   - *Anonymity*. The credential holder has control over the amount of information the verifier learns in the specific interaction (note that this does not protect the holder from what the verifier can learn outside the specific interaction).
+   - *Unlinkability*. The credential issuer cannot know where the credential, or parts thereof, is used.
+   - *Anti correlation*. The credential cannot be correlated by any other value than the identity attributes contained within.
 
 ### History   
 
