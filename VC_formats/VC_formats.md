@@ -32,3 +32,4 @@ Today, the adoption of the AnonCred format is largest among the members of the D
 
 ### Mathematical foundations of CL
  
+See [this Jupyter notebook](https://github.com/PeterAltmann/SSIdemo/blob/main/VC_formats/math_CL.ipynb).
