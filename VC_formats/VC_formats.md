@@ -22,8 +22,6 @@ The AnonCred format can be traced back to the mid 1980s and has since evolved to
 
 The CL signature scheme requires very large keys. In [2004](https://crypto.stanford.edu/~dabo/pubs/papers/groupsigs.pdf), Boneh, Boyen, and Shacham developed the BBS signature scheme. Based on the one of the Diffie-Hellman assumptions, the BBS signature builds on pairing based elliptic curve cryptography and thus requires a lot shorter keys. Later improvements (Au, Susilo, Mu [2006](https://link.springer.com/chapter/10.1007%2F11832072_8); Camenisch, Drijvers, and Lehmann [2016](https://eprint.iacr.org/2016/663)) lead to the BBS+ signature scheme. In [2020](https://github.com/decentralized-identity/snark-credentials/blob/master/whitepaper.pdf), Microsoft research published a white paper detailing an AnonCred implementation using [zk-SNARK](https://eprint.iacr.org/2019/550.pdf).
 
-
-
 ### Adoption
 
 Some of the earliest adoptions of AnonCred was [U-Prove](https://www.microsoft.com/en-us/research/project/u-prove/?from=https%3A%2F%2Fresearch.microsoft.com%2Fen-us%2Fprojects%2Fu-prove) and Idemix (cf. [1](https://idemix.wordpress.com/) and [2](https://github.com/IBM/idemix)). Idemix has been integrated into projects like [IRMA](https://irma.app/) and Hyperledger Fabric Today, and both Hyperledger Indy and Hyperledger Ursa were developed with Idemix as a base. Between 2010-2015, the EU funded [ABC4Trust](https://abc4trust.eu/index.php) project defined a common, unified architecture for AnonCred systems. Both U-Prove and Idemix were integrated into the architecture (results published [here](https://abc4trust.eu/index.php/pub) and repo is available [here](https://github.com/p2abcengine/p2abcengine)).  
@@ -31,5 +29,43 @@ Some of the earliest adoptions of AnonCred was [U-Prove](https://www.microsoft.c
 Today, the adoption of the AnonCred format is largest among the members of the Decentralized Identity Foundation ([DIF](https://identity.foundation/)). In particular, [Trinsic](https://trinsic.id/), [Evernym](https://www.evernym.com/), [MATTR](https://mattr.global/), [Transmute](https://www.transmute.industries/), and [Finema](https://finema.co/) are all experimenting with the AnonCred format. Of special interest here is the Hyperledger projects that are AnonCred compliant: Fabric (uses Idemix), Indy, and Ursa (uses CL signatures and is similar to Idemix). The Indy and Ursa support both AnonCred 1.0 (uses CL) and AnonCred 2.0 (uses BBS+).
 
 ### Mathematical foundations of CL
- 
-See [this Jupyter notebook](https://github.com/PeterAltmann/SSIdemo/blob/main/VC_formats/math_CL.ipynb).
+
+Next follows three levels of explanation intended to help a reader understand the mathematical foundations of the CL signature scheme.
+
+**In-depth explanation**: 
+See [this Jupyter notebook](https://github.com/PeterAltmann/SSIdemo/blob/main/VC_formats/math_CL.ipynb) for an extended explanation of the SRSA based CL signature scheme.
+
+**Somewhat technical explanation**:
+The CL signature scheme relies on two components: 1) a hardness assumption (e.g., SRSA or ECDLP), and 2) Pedersen commitments. A hardness assumption makes it possible to create so called trapdoor functions that maps elements from a domain to a co-domain, where it is difficult to find the inverse of a function without knowing some secret (as shown in the figure below). Prime factorization and the discrete log problem are two well known problems that form the basis of many trapdoor functions. 
+
+![A trapdoor function](https://github.com/PeterAltmann/SSIdemo/blob/main/VC_formats/functionGF.svg)
+
+**Figure 1**. A function, **F**, maps an input *x* to an output *y*. The inverse function **G** takes as input (*s, y*) and outputs *x*. If *s* is not provided, it must be guessed.
+
+Using such a trapdoor function, it is possible to create a Pedersen commitment. Such a commitment takes a message and inputs it to a trapdoor function. When the output of the function is shared it becomes a commitment to the input message. Without the secret, it is not practically possible to find the input message.
+
+**An analogy based explanation**: 
+An analogy may help understand the above:
+
+1. Alice writes a number on a note.
+2. Alice puts the note into a box equipped with a PIN lock and locks the box.
+3. Alice hands over the box to Bob
+4. At a later date, Alice can reveal the PIN to Bob, who can use the code to open the box and access the note.
+
+Step 1 is the message acting as the input. Step 2 is using the message as an input to a trapdoor function. Step 3 is equivalent to the public commitment of the message. And step 4 is sharing the secret that allows to allows the public revealing of the message.
+
+### Selective Disclosure
+
+Using a multi-message signature scheme, like CL or BBS+, selective disclosure can be enabled as follows:
+
+1. Consider each identity attribute as the message
+2. Create a Pedersen commitment to each message
+3. Sign the Pedersen commitments using a multi-message signature scheme
+4. Issue an object with the commitments and the signature on these commitments (this is the verifiable credential)
+5. The holder, who knows the message, has two options of sharing a verifiable credential:
+    * share the message and all information required to create the Pedersen commitment on the message 
+    * share only the Pedersen commitment on the message
+6. The verifier:
+    * can see any message shared and create the corresponding Pedersen commitment used in the verifiable credential
+    * cannot learn any message that the holder did not share
+    * can verify the signature on the Pedersen commitments in the verifiable credential 
