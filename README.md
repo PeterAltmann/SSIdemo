@@ -73,3 +73,15 @@ In Lab 3. we continue taking a closer look at ACA-Py and see how we can use it t
 ## Lab 4
 
 In [Lab 4](https://github.com/PeterAltmann/SSIdemo/blob/main/LAB4.md), we take a closer look at DIDComm and the ways agents can connect.
+
+## Lab 5
+
+In Lab 5, we take a closer look at a simple presentation flow.
+
+## Lab 6
+
+In Lab 6, we take a closer look at revocation and how it works with relation to presentations.
+
+## Lab 7
+
+In Lab 7, we take a closer look at selective disclosure.
