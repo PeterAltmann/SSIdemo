@@ -97,7 +97,7 @@ In BBS+, both `G_1` and `G_2` are groups of points on elliptic curves over finit
 * `P_2 = b \cdot g_2`
 * `e(P_1, P_2) = e(a \cdot g_1, b \cdot g_2) = e(g_1, g_2)^{ab} = g_T^{ab}`
 
-This is where my understanding if EC pairings stops. Vitalik Buterin wrote a more extensive [guide](https://medium.com/@VitalikButerin/exploring-elliptic-curve-pairings-c73c1864e627#:~:text=Elliptic%20curve%20pairings%20(or%20%E2%80%9Cbilinear,curve%2Dbased%20protocols%20can%20do.) on medium and Fitzgerald introduces some [examples used in zkSNARK](https://blog.statebox.org/elliptic-curve-pairings-213131769fac) in his medium post, but I cannot understand the entire explanation and will therefore continue instead with discussing the q-SDH Assumption.
+This is where my understanding if EC pairings stops. Vitalik Buterin wrote a more extensive [guide](https://medium.com/@VitalikButerin/exploring-elliptic-curve-pairings-c73c1864e627) on medium and Fitzgerald introduces some [examples used in zkSNARK](https://blog.statebox.org/elliptic-curve-pairings-213131769fac) in his medium post, but I cannot understand the entire explanation and will therefore continue instead with discussing the q-SDH Assumption.
 
 **q-SDH Assumption**:
 The q-SDH Assumption extends the traditional DH Assumptions over two cyclic groups `(G_1,G_2)` where the might be an efficiently computable homomorphism from `G_2` to `G_1`.
