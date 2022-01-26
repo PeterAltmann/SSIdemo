@@ -70,7 +70,7 @@ Example with Z_5 ie., the group {0,1,2,3,4}. We are interested in its multiplica
 
 As we can see, the multiplicative group for Z_5 modulo 5 is a cyclic group with 4 generators.
 
-An elliptic curve is always a cyclic group or the product of two cyclic groups ([source to an introdction to EC](https://www.math.brown.edu/johsilve/Presentations/WyomingEllipticCurve.pdf)).
+An elliptic curve is always a cyclic group or the product of two cyclic groups ([source to an introduction to EC](https://www.math.brown.edu/johsilve/Presentations/WyomingEllipticCurve.pdf)).
 
 **Bilinear mappings**:
 Bilinear maps satisfy the following (+ and * are arbitrary operators):
