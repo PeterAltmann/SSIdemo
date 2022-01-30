@@ -80,7 +80,7 @@ In Lab 5, we take a closer look at a simple presentation flow.
 
 ## Lab 6
 
-In Lab 6, we take a closer look at revocation and how it works with relation to presentations.
+In [Lab 6](https://github.com/PeterAltmann/SSIdemo/blob/main/LAB6.md), we take a closer look at revocation and how it works with relation to presentations.
 
 ## Lab 7
 
