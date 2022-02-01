@@ -93,3 +93,7 @@ In Lab 8, we look at the OpenAPI demo that exists in the [ACA-Py github demo fol
 ## Lab 9
 
 In Lab 9. We showcase webhooks and how the aca-py agent framework interacts with the controller.
+
+## Lab 10
+
+In Lab 10, we look at JSON-LD VC formats signed with BBS+. Source (https://github.com/hyperledger/aries-cloudagent-python/blob/main/demo/AliceWantsAJsonCredential.md)
