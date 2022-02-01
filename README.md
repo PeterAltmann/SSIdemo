@@ -85,3 +85,7 @@ In [Lab 6](https://github.com/PeterAltmann/SSIdemo/blob/main/LAB6.md), we take a
 ## Lab 7
 
 In Lab 7, we take a closer look at selective disclosure.
+
+## Lab 8
+
+In Lab 8, we look at the OpenAPI demo that exists in the [ACA-Py github demo folder](https://github.com/hyperledger/aries-cloudagent-python/blob/main/demo/AriesOpenAPIDemo.md). 
