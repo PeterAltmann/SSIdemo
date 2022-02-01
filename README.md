@@ -89,3 +89,7 @@ In Lab 7, we take a closer look at selective disclosure.
 ## Lab 8
 
 In Lab 8, we look at the OpenAPI demo that exists in the [ACA-Py github demo folder](https://github.com/hyperledger/aries-cloudagent-python/blob/main/demo/AriesOpenAPIDemo.md). 
+
+## Lab 9
+
+In Lab 9. We showcase webhooks and how the aca-py agent framework interacts with the controller.
