@@ -1,1 +1,1 @@
-See CEf_final_report.ipynb
+See [final report](https://github.com/PeterAltmann/SSIdemo/blob/main/CEF_final_report.ipynb)
